@@ -28,6 +28,9 @@ Provide a detailed description of the bug here
 ## Possible Implementation
 Not obligatory, but suggest an idea for solving the bug
 
+<br>
+<br>
+<br>
 
 # New Features
 
@@ -43,4 +46,7 @@ Provide a detailed description of the change or addition you are proposing along
 ## Possible Implementation
 Not obligatory, but suggest an implementation the feature
 
-***Please View the Pull Request Template, if you would like to implement a feature/ fix a bug.***
+<br>
+<br>
+
+***Please View the [Pull Request Template](https://github.com/vedantpuri/pymport/blob/master/PULL_REQUEST_TEMPLATE.md), if you would like to implement a feature/ fix a bug.***
