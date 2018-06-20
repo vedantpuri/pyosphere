@@ -44,25 +44,52 @@ delete_tests() {
   fi
 }
 
-# Prepare test
+# Auto-generate test libraries with provided args
+generate_test_files() {
+  local folder_name="${1}"
+  local file_prefix="${2}"
+  local file_count="${3}"
+  local file_var_count="${4}"
+  local file_func_count="${5}"
+  local program_file=""
+  mkdir -p "${test_dir}${folder_name}/"
+  for (( file_num=1; file_num<="${file_count}"; file_num++ ))
+  do
+    program_file="${test_dir}${folder_name}/${file_prefix}${file_num}.py"
+    touch "${program_file}"
+    > "${program_file}"
+    for (( value_num=1; value_num<="${file_var_count}"; value_num++ ))
+    do
+      echo "${file_prefix}${file_num}_value${value_num} = ${value_num}" >> "${program_file}"
+    done
+    for (( func_num=1; func_num<="${file_func_count}"; func_num++ ))
+    do
+      echo "\n" >> "${program_file}"
+      echo "def ${file_prefix}${file_num}_func${func_num}:\n\tprint(\"Inside func${func_num}\")" >> "${program_file}"
+    done
+    echo "\n" >> "${program_file}"
+  done
+}
+
+# Prepare small, medium (default), or large test
 prepare_test() {
   case "${1}" in
     "small")
     echo "${bold}Preparing small test..${normal}"
-    mkdir -p "${test_dir}Sources/" "${test_dir}Libraries/"
-    touch "${test_dir}Libraries/lib1.py" "${test_dir}Libraries/lib2.py" "${test_dir}Sources/main.py"
-    echo "lib1_value = 1" > "${test_dir}Libraries/lib1.py"
-    echo "lib2_value = 2" > "${test_dir}Libraries/lib2.py"
-    local main_program="from lib1 import lib1_value\nfrom lib2 import lib2_value\nprint(lib1_value)\nprint(lib2_value)"
-    echo "${main_program}" > "${test_dir}Sources/main.py"
+    generate_test_files "Libraries" "lib" 3 3 3
+    generate_test_files "Sources" "main" 1 0 0
+    local main_program="from lib1 import lib1_value\nimport lib2\nprint(lib1_value)\nlib2.lib2_func1()"
+    echo "${main_program}" > "${test_dir}Sources/main1.py"
+    echo "Small test generated."
     ;;
     ""|"medium")
     echo "${bold}Preparing medium test..${normal}"
-    mkdir -p "${test_dir}Sources/" "${test_dir}Libraries/"
+    echo "Medium test generated."
     ;;
     "large")
     echo "${bold}Preparing large test..${normal}"
     mkdir -p "${test_dir}Sources/" "${test_dir}Libraries/"
+    echo "Large test generated."
     ;;
     *)
     echo "Invalid project size provided."
@@ -70,7 +97,6 @@ prepare_test() {
     exit
     ;;
   esac
-  echo "Test generation complete."
 }
 
 # Parse provided user arguments
