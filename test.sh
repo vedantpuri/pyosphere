@@ -46,12 +46,36 @@ delete_tests() {
 
 # Prepare test
 prepare_test() {
-  echo "Preparing test.."
+  case "${1}" in
+    "small")
+    echo "${bold}Preparing small test..${normal}"
+    mkdir -p "${test_dir}Sources/" "${test_dir}Libraries/"
+    touch "${test_dir}Libraries/lib1.py" "${test_dir}Libraries/lib2.py" "${test_dir}Sources/main.py"
+    echo "lib1_value = 1" > "${test_dir}Libraries/lib1.py"
+    echo "lib2_value = 2" > "${test_dir}Libraries/lib2.py"
+    local main_program="from lib1 import lib1_value\nfrom lib2 import lib2_value\nprint(lib1_value)\nprint(lib2_value)"
+    echo "${main_program}" > "${test_dir}Sources/main.py"
+    ;;
+    ""|"medium")
+    echo "${bold}Preparing medium test..${normal}"
+    mkdir -p "${test_dir}Sources/" "${test_dir}Libraries/"
+    ;;
+    "large")
+    echo "${bold}Preparing large test..${normal}"
+    mkdir -p "${test_dir}Sources/" "${test_dir}Libraries/"
+    ;;
+    *)
+    echo "Invalid project size provided."
+    print_usage
+    exit
+    ;;
+  esac
+  echo "Test generation complete."
 }
 
 # Parse provided user arguments
 parse_args() {
-  case "$@" in
+  case "${@}" in
     -v|--version)
     print_version
     ;;
@@ -63,23 +87,7 @@ parse_args() {
     ;;
     -ps=*|--project-size=*)
     local provided_project_size="${@#*=}"
-    case "${provided_project_size}" in
-      "small")
-      project_size="small"
-      ;;
-      "medium")
-      project_size="medium"
-      ;;
-      "large")
-      project_size="large"
-      ;;
-      *)
-      echo "Invalid project size provided."
-      print_usage
-      exit
-      ;;
-    esac
-    prepare_test
+    prepare_test "${@#*=}"
     ;;
     "")
     prepare_test
@@ -90,4 +98,4 @@ parse_args() {
   esac
 }
 
-parse_args "$@"
+parse_args "${@}"
