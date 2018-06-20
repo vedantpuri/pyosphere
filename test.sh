@@ -100,7 +100,7 @@ prepare_test() {
     echo "${bold}Preparing small test..${normal}"
     generate_test_files "Libraries" "lib" 3 3 3 1
     generate_test_files "Sources" "main" 1 0 0 0
-    local main_program="from lib1 import lib1_value\nimport lib2\nprint(lib1_value)\nlib2.lib2_func1()"
+    local main_program="from lib1 import lib1_value1\nimport lib2\nprint(lib1_value1)\nlib2.lib2_func1()"
     echo "${main_program}" > "${test_dir}Sources/main1.py"
     echo "Small test generated."
     ;;
