@@ -1,5 +1,5 @@
 #!/bin/sh
-# Script (pymport.sh)
+# pyosphere.sh
 # Author(s): Vedant Puri
 # Contributer(s): Mayank Kumar
 # Version: 1.0.0

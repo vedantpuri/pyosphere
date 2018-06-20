@@ -63,19 +63,23 @@ generate_test_files() {
   for (( file_num=1; file_num<="${file_count}"; file_num++ ))
   do
     local nests=0
+    local folder_value=""
     local nested_path="${base_path}"
     if [[ "${nest_level}" != 0 ]]
     then
       nests="$(( $RANDOM % $nest_level + 1 ))"
     fi
+    if [[ "$(( $RANDOM % 2 ))" == 1 ]]
+    then
+      folder_value="${file_num}"
+    fi
     for (( depth=1; depth<=nests; depth++ ))
     do
-      nested_path="${nested_path}Internal${depth}/"
+      nested_path="${nested_path}${file_prefix}${folder_value}_internal_${depth}/"
     done
     mkdir -p "${nested_path}"
     local program_file="${nested_path}/${file_prefix}${file_num}.py"
     touch "${program_file}"
-    > "${program_file}"
     for (( value_num=1; value_num<="${file_var_count}"; value_num++ ))
     do
       echo "${file_prefix}${file_num}_value${value_num} = ${value_num}" >> "${program_file}"
@@ -94,7 +98,7 @@ prepare_test() {
   case "${1}" in
     "small")
     echo "${bold}Preparing small test..${normal}"
-    generate_test_files "Libraries" "lib" 3 3 3 0
+    generate_test_files "Libraries" "lib" 3 3 3 1
     generate_test_files "Sources" "main" 1 0 0 0
     local main_program="from lib1 import lib1_value\nimport lib2\nprint(lib1_value)\nlib2.lib2_func1()"
     echo "${main_program}" > "${test_dir}Sources/main1.py"
