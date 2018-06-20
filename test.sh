@@ -38,9 +38,15 @@ delete_tests() {
   if [[ -d "${test_dir}" ]]
   then
     rm -r "${test_dir}"
-    echo "Test files have been removed sucessfully."
+    if [[ "$1" != "-s" ]]
+    then
+      echo "Test files have been removed sucessfully."
+    fi
   else
-    echo "Test directory not found. No action required."
+    if [[ "$1" != "-s" ]]
+    then
+      echo "Test directory not found. No action required."
+    fi
   fi
 }
 
@@ -51,11 +57,23 @@ generate_test_files() {
   local file_count="${3}"
   local file_var_count="${4}"
   local file_func_count="${5}"
-  local program_file=""
-  mkdir -p "${test_dir}${folder_name}/"
+  local nest_level="${6}"
+  local base_path="${test_dir}${folder_name}/"
+  mkdir -p "${base_path}"
   for (( file_num=1; file_num<="${file_count}"; file_num++ ))
   do
-    program_file="${test_dir}${folder_name}/${file_prefix}${file_num}.py"
+    local nests=0
+    local nested_path="${base_path}"
+    if [[ "${nest_level}" != 0 ]]
+    then
+      nests="$(( $RANDOM % $nest_level + 1 ))"
+    fi
+    for (( depth=1; depth<=nests; depth++ ))
+    do
+      nested_path="${nested_path}Internal${depth}/"
+    done
+    mkdir -p "${nested_path}"
+    local program_file="${nested_path}/${file_prefix}${file_num}.py"
     touch "${program_file}"
     > "${program_file}"
     for (( value_num=1; value_num<="${file_var_count}"; value_num++ ))
@@ -76,19 +94,24 @@ prepare_test() {
   case "${1}" in
     "small")
     echo "${bold}Preparing small test..${normal}"
-    generate_test_files "Libraries" "lib" 3 3 3
-    generate_test_files "Sources" "main" 1 0 0
+    generate_test_files "Libraries" "lib" 3 3 3 0
+    generate_test_files "Sources" "main" 1 0 0 0
     local main_program="from lib1 import lib1_value\nimport lib2\nprint(lib1_value)\nlib2.lib2_func1()"
     echo "${main_program}" > "${test_dir}Sources/main1.py"
     echo "Small test generated."
     ;;
     ""|"medium")
     echo "${bold}Preparing medium test..${normal}"
+    # generate_test_files "Libraries" "lib" 20 9 6
+    # generate_test_files "Sources" "main" 3 0 0
+    # Decide program
     echo "Medium test generated."
     ;;
     "large")
     echo "${bold}Preparing large test..${normal}"
-    mkdir -p "${test_dir}Sources/" "${test_dir}Libraries/"
+    # generate_test_files "Libraries" "lib" 200 50 20
+    # generate_test_files "Sources" "main" 10 0 0
+    # Decide program
     echo "Large test generated."
     ;;
     *)
@@ -111,12 +134,9 @@ parse_args() {
     -h|--help)
     print_usage
     ;;
-    -ps=*|--project-size=*)
-    local provided_project_size="${@#*=}"
+    -ps=*|--project-size=*|"")
+    delete_tests -s
     prepare_test "${@#*=}"
-    ;;
-    "")
-    prepare_test
     ;;
     *)
     echo "Invalid argument."
