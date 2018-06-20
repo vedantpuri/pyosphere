@@ -5,24 +5,12 @@
 # Version: 1.0.0
 # Atom -> Tab Indent Level: 2
 
+# Creates symbolic links for all .py files and collects them within a single directory
 accumulate_files() {
-  $(mkdir pyosphere)
-  find $(pwd) -name "*.py" | while read path; do
-    fname=$(basename "$path")
-    $(ln -s "$path" "pyosphere/$fname" )
+  mkdir -p pyosphere
+  find "${1}" -name "*.py" | while read path;
+  do
+    file_name=$(basename "${path}")
+    $(ln -s "${path}" "pyosphere/${file_name}" )
   done
 }
-
-# collect_directory_paths()
-# {
-#   for file in "$1"/*
-#   do
-#     if [[ -d "$file" ]]
-#     then
-#       echo "$file"
-#       get_last_internal_nodes "$file"
-#     fi
-#   done
-# }
-#
-# collect_directory_paths "."
