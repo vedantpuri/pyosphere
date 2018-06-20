@@ -83,7 +83,7 @@ generate_test_files() {
     for (( func_num=1; func_num<="${file_func_count}"; func_num++ ))
     do
       echo "\n" >> "${program_file}"
-      echo "def ${file_prefix}${file_num}_func${func_num}:\n\tprint(\"Inside func${func_num}\")" >> "${program_file}"
+      echo "def ${file_prefix}${file_num}_func${func_num}():\n\tprint(\"Inside func${func_num}\")" >> "${program_file}"
     done
     echo "\n" >> "${program_file}"
   done
