@@ -6,8 +6,16 @@
 # Version: 1.0.0
 # Options: -v | --version, -d | --delete, -ps | --project-size, -h | --help
 
+# Console text preferences
+underline="$(tput smul)"
+bold="$(tput bold)"
+normal="$(tput sgr0)"
+
+# Script information
 script_version="1.0.0"
 test_dir="Tests/"
+
+# Test information
 project_size=""
 
 # Print the script version to console
@@ -17,7 +25,12 @@ print_version() {
 
 # Print test.sh usage
 print_usage() {
-  echo "Printing usage"
+  echo "Usage: ${bold}./test.sh${normal} [-v|--version] [-d|--delete] [-ps|--project-size] [-h|--help]
+  where:
+  ${underline}-v${normal}   Prints script version.
+  ${underline}-d${normal}   Deletes generated test files and folders.
+  ${underline}-ps${normal}  Specifies project size [small/medium (default)/large].
+  ${underline}-h${normal}   Prints script usage."
 }
 
 # Delete any test files/folders
@@ -49,7 +62,7 @@ parse_args() {
     print_usage
     ;;
     -ps=*|--project-size=*)
-    local provided_project_size="${i#*=}"
+    local provided_project_size="${@#*=}"
     case "${provided_project_size}" in
       "small")
       project_size="small"
