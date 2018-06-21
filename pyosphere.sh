@@ -3,7 +3,7 @@
 # Author(s): Vedant Puri
 # Contributer(s): Mayank Kumar
 # Version: 1.0.0
-# Options: -v | --version, -h | --help, -cf= | --config-file=, -cl | --clean, i | --init
+# Options: -v | --version, -h | --help, -cf= | --config-file=, -cl | --clean, -i | --init
 
 # ----- ENVIRONMENT & CONSOLE
 
@@ -32,13 +32,19 @@ print_version() {
 
 # Print pyosphere.sh usage
 print_usage() {
-  echo "Usage: ${bold}./pyosphere.sh${normal} [-v|--version] [-h|--help] [-cf|--config-file] [-cl|--clean] [-i|--init]
+  echo "Usage: ${bold}./pyosphere.sh${normal} [-v|--version] [-h|--help] [-cf=|--config-file=] [-cl|--clean] [-i|--init]
   where:
-  ${underline}-v${normal}   Prints script version.
-  ${underline}-h${normal}   Prints script usage.
-  ${underline}-cf${normal}  Executes with specified config file (default = pyosphere.config in current directory)
-  ${underline}-cl${normal}  Clean current working directory.
-  ${underline}-i${normal}   Initialize pyosphere for project."
+  ${underline}-v${normal}    Prints script version
+  ${underline}-h${normal}    Prints script usage
+  ${underline}-cf=${normal}  Executes with specified config file (default = ${bold}pyosphere.config${normal})
+  ${underline}-cl${normal}   Clean current working directory
+  ${underline}-i${normal}    Initialize pyosphere for project
+
+  ${bold}pyosphere.config${normal} Options:
+  ${underline}python${normal}         Specify python binary/command (default = ${bold}python${normal})
+  ${underline}run_source${normal}     Specify python binary/command
+  ${underline}project_path${normal}   Specify python project path (default = ${bold}pwd${normal})
+  ${underline}always_clean${normal}   Specify clean settings for incremental builds (default = ${bold}false${normal})"
 }
 
 # ----- PYOSPHERE CONFIGURATION MANAGEMENT
@@ -84,15 +90,21 @@ print_usage() {
 generate_symbolic_links() {
   find "${project_path}" -name "*.py" | while read path
   do
-    ln -s "${path}" "${pyosphere_dir}$(basename "${path}")"
+    ln "${path}" "${pyosphere_dir}$(basename "${path}")"
   done
 }
 
 # Assigned: @mayankk2308
 # Clean project
-# clean() {
-#   # Clean pyosphere in current working directory
-# }
+clean() {
+  if [[ -d "${pyosphere_dir}" ]]
+  then
+    rm -r "${pyosphere_dir}"
+    echo "Clean successful."
+  else
+    echo "Nothing to clean."
+  fi
+}
 
 # ----- PYOSPHERE CONTROL FLOW
 
@@ -101,10 +113,45 @@ generate_symbolic_links() {
 # begin_execution() {
 #   # Execute necessary functions with environment settings
 #   # All functions are argument-free (excluding parse_args)
+#   # Print all issues + number of issues encountered
+#   ### Examples:
+#   ###         1 Issue:
+#   ###           - pyosphere.config not found
+#
+#   ###         2 Issues:
+#   ###           - Specified python binary not found
+#   ###           - Could not find any python files
 # }
 
 # Assigned: @mayankk2308
 # Parse script arguments
-# parse_args() {
-#   # Handle supported arguments
-# }
+parse_args() {
+  case "${@}" in
+    -v|--version)
+    print_version
+    ;;
+    -h|--help)
+    print_usage
+    ;;
+    -cl|--clean)
+    clean
+    ;;
+    -i|--init)
+    # generate_pyosphere_config
+    ;;
+    -cf=*|--config-file=*|"")
+    local config_file="${@#*=}"
+    if [[ ! -z "${config_file}" ]]
+    then
+      pyosphere_config="${config_file}"
+    fi
+    # begin_execution
+    ;;
+    *)
+    echo "Invalid argument."
+    print_usage
+    ;;
+  esac
+}
+
+parse_args "${@}"
