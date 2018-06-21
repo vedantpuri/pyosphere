@@ -3,7 +3,7 @@
 # Author(s): Vedant Puri
 # Contributer(s): Mayank Kumar
 # Version: 1.0.0
-# Options: -v | --version, -h | --help, -cf= | --config-file=, -cl | --clean, -i | --init
+# Options: -v | --version, -h | --help, -cf= | --config-file=, -cl | --clean, -i | --init, -r | --reset
 
 # ----- ENVIRONMENT & CONSOLE
 
@@ -17,11 +17,11 @@ script_version="1.0.0"
 
 # Environment information with defaults
 pyosphere_config="pyosphere.config"
-python="python"
-run_source=""
-project_path="$(pwd)"
+python_bin="python"
+given_run_source=""
+given_project_path="$(pwd)"
+always_clean_pref=false
 pyosphere_dir="pyosphere/"
-always_clean=false
 
 # ----- SCRIPT SUPPORT
 
@@ -32,13 +32,14 @@ print_version() {
 
 # Print pyosphere.sh usage
 print_usage() {
-  echo "Usage: ${bold}./pyosphere.sh${normal} [-v|--version] [-h|--help] [-cf=|--config-file=] [-cl|--clean] [-i|--init]
+  echo "Usage: ${bold}./pyosphere.sh${normal} [-v|--version] [-h|--help] [-cf=|--config-file=] [-cl|--clean] [-i|--init] [-r|--reset]
   where:
   ${underline}-v${normal}    Prints script version
   ${underline}-h${normal}    Prints script usage
   ${underline}-cf=${normal}  Executes with specified config file (default = ${bold}pyosphere.config${normal})
   ${underline}-cl${normal}   Clean current working directory
   ${underline}-i${normal}    Initialize pyosphere for project
+  ${underline}-r${normal}    Reset project to pre-pyosphere state
 
   ${bold}pyosphere.config${normal} Options:
   ${underline}python${normal}         Specify python binary/command (default = ${bold}python${normal})
@@ -49,6 +50,7 @@ print_usage() {
 
 # ----- PYOSPHERE CONFIGURATION MANAGEMENT
 
+# May not be required at all
 # Assigned: @mayankk2308
 # Manage relative paths
 # manage_relative_project_path() {
@@ -56,7 +58,7 @@ print_usage() {
 # }
 
 # Assigned: @vedantpuri
-# Manage pyosphere configurations
+# Manage pyosphere configurations - can likely source $pyosphere_config
 # parse_pyosphere_config() {
 #   # parse $pyosphere_config
 #   # update $python, $run_source, $project_path, & $always_clean as necessary
@@ -66,10 +68,17 @@ print_usage() {
 
 # Assigned: @mayankk2308
 # Auto-generate pyosphere configurations
-# generate_pyosphere_config() {
-#   # provide user-interactive pyosphere config generation
-#   # alternatively just generate config file and let user fill it manually
-# }
+generate_pyosphere_config() {
+  echo "${bold}Generating pyosphere configuration...${normal}"
+  touch "${pyosphere_config}"
+  > "${pyosphere_config}"
+  echo -e "#!/bin/bash\n" >> "${pyosphere_config}"
+  echo -e "python=\"${python}\"" >> "${pyosphere_config}"
+  echo -e "run_source=\"${run_source}\"" >> "${pyosphere_config}"
+  echo -e "project_path=\"${project_path}\"" >> "${pyosphere_config}"
+  echo -e "always_clean=${always_clean}" >> "${pyosphere_config}"
+  echo "Configuration generated."
+}
 
 # ----- PYOSPHERE PROJECT MANAGEMENT
 
@@ -86,8 +95,8 @@ print_usage() {
 #   # Handle deleted links, etc.
 # }
 
-# Accumulate symbolic links for all .py files
-generate_symbolic_links() {
+# Generate hard links for all .py files
+generate_hard_links() {
   find "${project_path}" -name "*.py" | while read path
   do
     ln "${path}" "${pyosphere_dir}$(basename "${path}")"
@@ -99,10 +108,25 @@ generate_symbolic_links() {
 clean() {
   if [[ -d "${pyosphere_dir}" ]]
   then
+    echo "${bold}Cleaning...${normal}"
     rm -r "${pyosphere_dir}"
     echo "Clean successful."
   else
     echo "Nothing to clean."
+  fi
+}
+
+# Assigned: @mayankk2308
+# Reset project
+reset() {
+  clean
+  if [[ -f "${pyosphere_config}" ]]
+  then
+    echo "${bold}Resetting...${normal}"
+    rm "${pyosphere_config}"
+    echo "Reset complete."
+  else
+    echo "No configuration file detected. Procedure complete."
   fi
 }
 
@@ -137,7 +161,10 @@ parse_args() {
     clean
     ;;
     -i|--init)
-    # generate_pyosphere_config
+    generate_pyosphere_config
+    ;;
+    -r|--reset)
+    reset
     ;;
     -cf=*|--config-file=*|"")
     local config_file="${@#*=}"
