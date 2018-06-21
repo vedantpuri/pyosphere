@@ -106,16 +106,18 @@ prepare_test() {
     ;;
     ""|"medium")
     echo "${bold}Preparing medium test..${normal}"
-    # generate_test_files "Libraries" "lib" 20 9 6
-    # generate_test_files "Sources" "main" 3 0 0
-    # Decide program
+    generate_test_files "Libraries" "lib" 20 5 5 5
+    generate_test_files "Sources" "main" 1 0 0 0
+    local main_program="from lib7 import lib7_value4\nimport lib19\nprint(lib7_value4)\nlib19.lib19_func5()"
+    echo "${main_program}" > "${test_dir}Sources/main1.py"
     echo "Medium test generated."
     ;;
     "large")
     echo "${bold}Preparing large test..${normal}"
-    # generate_test_files "Libraries" "lib" 200 50 20
-    # generate_test_files "Sources" "main" 10 0 0
-    # Decide program
+    generate_test_files "Libraries" "lib" 100 20 20 10
+    generate_test_files "Sources" "main" 1 0 0 0
+    local main_program="from lib97 import lib97_value20\nimport lib58\nprint(lib97_value20)\nlib58.lib19_func7()"
+    echo "${main_program}" > "${test_dir}Sources/main1.py"
     echo "Large test generated."
     ;;
     *)
