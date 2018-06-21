@@ -3,8 +3,7 @@
 # Author(s): Vedant Puri
 # Contributer(s): Mayank Kumar
 # Version: 1.0.0
-# Atom -> Tab Indent Level: 2
-# Options: -v | --script-version, -pv | --python-version, -pp | --project-path, -ef | --execution-file, -c | --clean-build, -clr | --clear,  -h | --help
+# Options: -v | --version, -pv | --python-version, -pp | --project-path, -ef | --execution-file, -cb | --clean-build, -cl | --clear,  -h | --help
 
 # Console text preferences
 underline="$(tput smul)"
@@ -33,10 +32,9 @@ print_version() {
 accumulate_files() {
   mkdir -p pyosphere
   # pyosphere_location="${1}/pyosphere"
-  for path in $(find "${1}" -name "*.py");
+  for path in $(find "${1}" -name "*.py")
   do
-    fname=$(basename "${path}")
-    $(ln -s "${path}" "pyosphere/${fname}" )
+    ln -s "${path}" "pyosphere/$(basename "${path}")"
   done
 }
 
@@ -56,38 +54,54 @@ accumulate_files() {
 #   # Extract pyosphere_location and perform `rm -r`
 # }
 
+check_concurrent_args() {
+  if [[ "${1}" != 0 ]]
+  then
+    echo "Invalid combination of arguments."
+    # print_usage
+    exit
+  fi
+}
+
 # Parse provided user arguments and sets variables
 parse_args() {
+  local concurrent_arg=0
   for arg in "$@"
   do
   case "${arg}" in
-    -v|--script-version)
+    -v|--version)
+    check_concurrent_args "${concurrent_arg}"
     print_version
-    exit
     ;;
     -h|--help)
+    check_concurrent_args "${concurrent_arg}"
+    echo "help"
     # print_usage
-    exit
     ;;
     -pp=*|--project-path=*)
+    # Need better control flow. Why call a crucial process within arg parsing?
     accumulate_files "${arg#*=}"
+    (( concurrent_arg++ ))
     ;;
     -ef=*|--execution-file=*)
     execution_file="${arg#*=}"
+    (( concurrent_arg++ ))
     ;;
     -pv=*|--python-version=*)
     python_version="${arg#*=}"
+    (( concurrent_arg++ ))
     ;;
-    -clr|--clear)
+    -cl|--clear)
+    check_concurrent_args "${concurrent_arg}"
     # destructor
-    exit
     ;;
-    -c|--clean-build)
+    -cb|--clean-build)
+    check_concurrent_args "${concurrent_arg}"
     # perform_clean_build
-    exit
     ;;
     *)
     echo "Invalid argument."
+    # print_usage
   esac
   # start run here for set configuration
   done
