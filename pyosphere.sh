@@ -1,9 +1,11 @@
-#!/bin/sh
+#!/bin/bash
 # pyosphere.sh
 # Author(s): Vedant Puri
 # Contributer(s): Mayank Kumar
 # Version: 1.0.0
-# Options: -v | --version, -pv | --python-version, -pp | --project-path, -ef | --execution-file, -cb | --clean-build, -cl | --clear,  -h | --help
+# Options: -v | --version, -h | --help, -cf= | --config-file=, -cl | --clean, i | --init
+
+# ----- ENVIRONMENT & CONSOLE
 
 # Console text preferences
 underline="$(tput smul)"
@@ -13,10 +15,15 @@ normal="$(tput sgr0)"
 # Script information
 script_version="1.0.0"
 
-# Internal Variables
-python_version="$(python -V 2>&1 | awk '{print $2}')"
-pyosphere_location=""
-execution_file=""
+# Environment information with defaults
+pyosphere_config="pyosphere.config"
+python="python"
+run_source=""
+project_path="$(pwd)"
+pyosphere_dir="pyosphere/"
+always_clean=false
+
+# ----- SCRIPT SUPPORT
 
 # Print the script version to console
 print_version() {
@@ -24,89 +31,80 @@ print_version() {
 }
 
 # Print pyosphere.sh usage
-# print_usage() {
-#
+print_usage() {
+  echo "Usage: ${bold}./pyosphere.sh${normal} [-v|--version] [-h|--help] [-cf|--config-file] [-cl|--clean] [-i|--init]
+  where:
+  ${underline}-v${normal}   Prints script version.
+  ${underline}-h${normal}   Prints script usage.
+  ${underline}-cf${normal}  Executes with specified config file (default = pyosphere.config in current directory)
+  ${underline}-cl${normal}  Clean current working directory.
+  ${underline}-i${normal}   Initialize pyosphere for project."
+}
+
+# ----- PYOSPHERE CONFIGURATION MANAGEMENT
+
+# Assigned: @mayankk2308
+# Manage relative paths
+# manage_relative_project_path() {
+#   # Modify $project_path as necessary
 # }
 
-# Accumulates symbolic links for all .py files
-accumulate_files() {
-  mkdir -p pyosphere
-  # pyosphere_location="${1}/pyosphere"
-  find "${1}" -name "*.py" | while read path;
+# Assigned: @vedantpuri
+# Manage pyosphere configurations
+# parse_pyosphere_config() {
+#   # parse $pyosphere_config
+#   # update $python, $run_source, $project_path, & $always_clean as necessary
+#   # call manage_relative_project_path to re-evaluate $project_path if needed
+#   # handle errors in config here
+# }
+
+# Assigned: @mayankk2308
+# Auto-generate pyosphere configurations
+# generate_pyosphere_config() {
+#   # provide user-interactive pyosphere config generation
+#   # alternatively just generate config file and let user fill it manually
+# }
+
+# ----- PYOSPHERE PROJECT MANAGEMENT
+
+# Assigned: @vedantpuri
+# Execute provided run source
+# Do everything except execute if $run_source not provided
+# execute() {
+#   # execute $run_source once links have been generated
+# }
+
+# Assigned: @vedantpuri
+# Prune symbolic links for incremental builds
+# prune_symbolic_links() {
+#   # Handle deleted links, etc.
+# }
+
+# Accumulate symbolic links for all .py files
+generate_symbolic_links() {
+  find "${project_path}" -name "*.py" | while read path
   do
-    ln -s "${path}" "pyosphere/$(basename "${path}")"
+    ln -s "${path}" "${pyosphere_dir}$(basename "${path}")"
   done
 }
 
-# Runs the requested Python file
-# run_python() {
-#   # Run python using python-version and mentioned file
+# Assigned: @mayankk2308
+# Clean project
+# clean() {
+#   # Clean pyosphere in current working directory
 # }
 
-# perform_clean_build() {
-#   # Calls destructor
-#   # Calls accumulate_files
-#   # Calls run_python
+# ----- PYOSPHERE CONTROL FLOW
+
+# Assigned: @vedantpuri
+# Start pyosphere with environment set
+# begin_execution() {
+#   # Execute necessary functions with environment settings
+#   # All functions are argument-free (excluding parse_args)
 # }
 
-# Clears Pyosphere from the project
-# destructor() {
-#   # Extract pyosphere_location and perform `rm -r`
+# Assigned: @mayankk2308
+# Parse script arguments
+# parse_args() {
+#   # Handle supported arguments
 # }
-
-check_concurrent_args() {
-  if [[ "${1}" != 0 ]]
-  then
-    echo "Invalid combination of arguments."
-    # print_usage
-    exit
-  fi
-}
-
-# Parse provided user arguments and sets variables
-parse_args() {
-  local concurrent_arg=0
-  for arg in "$@"
-  do
-  case "${arg}" in
-    -v|--version)
-    check_concurrent_args "${concurrent_arg}"
-    print_version
-    ;;
-    -h|--help)
-    check_concurrent_args "${concurrent_arg}"
-    echo "help"
-    # print_usage
-    ;;
-    -pp=*|--project-path=*)
-    # Need better control flow. Why call a crucial process within arg parsing?
-    accumulate_files "${arg#*=}"
-    (( concurrent_arg++ ))
-    ;;
-    -ef=*|--execution-file=*)
-    execution_file="${arg#*=}"
-    (( concurrent_arg++ ))
-    ;;
-    -pv=*|--python-version=*)
-    python_version="${arg#*=}"
-    (( concurrent_arg++ ))
-    ;;
-    -cl|--clear)
-    check_concurrent_args "${concurrent_arg}"
-    # destructor
-    ;;
-    -cb|--clean-build)
-    check_concurrent_args "${concurrent_arg}"
-    # perform_clean_build
-    ;;
-    *)
-    echo "Invalid argument."
-    # print_usage
-  esac
-  # start run here for set configuration
-  done
-}
-
-parse_args "${@}"
-# echo "${pyosphere_location}"
-# $(rm -r "pyosphere")
