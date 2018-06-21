@@ -15,7 +15,7 @@ normal="$(tput sgr0)"
 script_version="1.0.0"
 
 # Internal Variables
-python_version=$(python -c 'import platform; print(platform.python_version())')
+python_version="$(python -V 2>&1 | awk '{print $2}')"
 pyosphere_location=""
 execution_file=""
 
@@ -25,9 +25,9 @@ print_version() {
 }
 
 # Print pyosphere.sh usage
-print_usage() {
-
-}
+# print_usage() {
+#
+# }
 
 # Accumulates symbolic links for all .py files
 accumulate_files() {
@@ -41,50 +41,55 @@ accumulate_files() {
 }
 
 # Runs the requested Python file
-run_python() {
-  # Run python using python-version and mentioned file
-}
+# run_python() {
+#   # Run python using python-version and mentioned file
+# }
 
-perform_clean_build() {
-  # Calls destructor
-  # Calls accumulate_files
-  # Calls run_python
-}
+# perform_clean_build() {
+#   # Calls destructor
+#   # Calls accumulate_files
+#   # Calls run_python
+# }
 
 # Clears Pyosphere from the project
-destructor() {
-  # Extract pyosphere_location and perform `rm -r`
-}
+# destructor() {
+#   # Extract pyosphere_location and perform `rm -r`
+# }
 
 # Parse provided user arguments and sets variables
 parse_args() {
   for arg in "$@"
   do
-  case $arg in
+  case "${arg}" in
     -v|--script-version)
     print_version
+    exit
     ;;
     -h|--help)
-    print_usage
+    # print_usage
+    exit
     ;;
     -pp=*|--project-path=*)
-    accumulate_files "${@#*=}"
+    accumulate_files "${arg#*=}"
     ;;
     -ef=*|--execution-file=*)
-    execution_file="${@#*=}"
+    execution_file="${arg#*=}"
     ;;
     -pv=*|--python-version=*)
-    python_version="${@#*=}"
+    python_version="${arg#*=}"
     ;;
     -clr|--clear)
-    destructor
+    # destructor
+    exit
     ;;
     -c|--clean-build)
-    perform_clean_build
+    # perform_clean_build
+    exit
     ;;
     *)
     echo "Invalid argument."
   esac
+  # start run here for set configuration
   done
 }
 
