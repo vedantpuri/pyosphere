@@ -164,6 +164,10 @@ parse_args() {
     -i|--init|"-i -e="*|"--init -e="*|"-i --execute="*|"--init --execute="*)
     # Could improve?
     given_run_source="$(echo "${@#*=}" | awk '{ print $2 }')"
+    if [[ "${@}" != "-i" && "${@}" != "--init" && -z "${given_run_source}" ]]
+    then
+      echo "No execution file provided. Run with ${underline}-h${normal} for help."
+    fi
     generate_pyosphere_config
     ;;
     -r|--reset)
@@ -174,7 +178,9 @@ parse_args() {
     if [[ ! -z "${config_file}" ]]
     then
       pyosphere_config="${config_file}"
-    else
+    fi
+    if [[ "${@}" != "" ]]
+    then
       echo "No configuration file provided. Run with ${underline}-h${normal} for help."
     fi
     # begin_execution
