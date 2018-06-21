@@ -51,13 +51,6 @@ print_usage() {
 
 # ----- PYOSPHERE CONFIGURATION MANAGEMENT
 
-# May not be required at all
-# Assigned: @mayankk2308
-# Manage relative paths
-# manage_relative_project_path() {
-#   # Modify $project_path as necessary
-# }
-
 # Assigned: @vedantpuri
 # Manage pyosphere configurations - can likely source $pyosphere_config
 # parse_pyosphere_config() {
@@ -167,6 +160,7 @@ parse_args() {
     if [[ "${@}" != "-i" && "${@}" != "--init" && -z "${given_run_source}" ]]
     then
       echo "No execution file provided. Run with ${underline}-h${normal} for help."
+      return
     fi
     generate_pyosphere_config
     ;;
@@ -182,6 +176,7 @@ parse_args() {
     if [[ "${@}" != "" ]]
     then
       echo "No configuration file provided. Run with ${underline}-h${normal} for help."
+      return
     fi
     # begin_execution
     ;;
