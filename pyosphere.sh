@@ -32,7 +32,7 @@ print_version() {
 accumulate_files() {
   mkdir -p pyosphere
   # pyosphere_location="${1}/pyosphere"
-  for path in $(find "${1}" -name "*.py")
+  find "${1}" -name "*.py" | while read path;
   do
     ln -s "${path}" "pyosphere/$(basename "${path}")"
   done
