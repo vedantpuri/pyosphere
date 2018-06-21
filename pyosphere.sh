@@ -3,7 +3,7 @@
 # Author(s): Vedant Puri
 # Contributer(s): Mayank Kumar
 # Version: 1.0.0
-# Options: -v | --version, -h | --help, -cf= | --config-file=, -cl | --clean, -i | --init, -r | --reset
+# Options: -v | --version, -h | --help, -cf= | --config-file=, -cl | --clean, -i | --init -e= | --execute=, -r | --reset
 
 # ----- ENVIRONMENT & CONSOLE
 
@@ -32,14 +32,15 @@ print_version() {
 
 # Print pyosphere.sh usage
 print_usage() {
-  echo "Usage: ${bold}./pyosphere.sh${normal} [-v|--version] [-h|--help] [-cf=|--config-file=] [-cl|--clean] [-i|--init] [-r|--reset]
+  echo "Usage: ${bold}./pyosphere.sh${normal} [-v|--version] [-h|--help] [-cf=|--config-file=] [-cl|--clean] [-i|--init -e=|--execute=] [-r|--reset]
   where:
-  ${underline}-v${normal}    Prints script version
-  ${underline}-h${normal}    Prints script usage
-  ${underline}-cf=${normal}  Executes with specified config file (default = ${bold}pyosphere.config${normal})
-  ${underline}-cl${normal}   Clean current working directory
-  ${underline}-i${normal}    Initialize pyosphere for project
-  ${underline}-r${normal}    Reset project to pre-pyosphere state
+  ${underline}-v${normal}        Prints script version
+  ${underline}-h${normal}        Prints script usage
+  ${underline}-cf=${normal}      Executes with specified config file (default = ${bold}pyosphere.config${normal})
+  ${underline}-cl${normal}       Clean current working directory
+  ${underline}-i${normal}        Initialize pyosphere for project
+  ${underline}-i -e=${normal}    Initialize pyosphere for project
+  ${underline}-r${normal}        Reset project to pre-pyosphere state
 
   ${bold}pyosphere.config${normal} Options:
   ${underline}python${normal}         Specify python binary/command (default = ${bold}python${normal})
@@ -73,10 +74,10 @@ generate_pyosphere_config() {
   touch "${pyosphere_config}"
   > "${pyosphere_config}"
   echo -e "#!/bin/bash\n" >> "${pyosphere_config}"
-  echo -e "python=\"${python}\"" >> "${pyosphere_config}"
-  echo -e "run_source=\"${run_source}\"" >> "${pyosphere_config}"
-  echo -e "project_path=\"${project_path}\"" >> "${pyosphere_config}"
-  echo -e "always_clean=${always_clean}" >> "${pyosphere_config}"
+  echo -e "python=\"${python_bin}\"" >> "${pyosphere_config}"
+  echo -e "run_source=\"${given_run_source}\"" >> "${pyosphere_config}"
+  echo -e "project_path=\"${given_project_path}\"" >> "${pyosphere_config}"
+  echo -e "always_clean=${always_clean_pref}" >> "${pyosphere_config}"
   echo "Configuration generated."
 }
 
@@ -160,7 +161,9 @@ parse_args() {
     -cl|--clean)
     clean
     ;;
-    -i|--init)
+    -i|--init|"-i -e="*|"--init -e="*|"-i --execute="*|"--init --execute="*)
+    # Could improve?
+    given_run_source="$(echo "${@#*=}" | awk '{ print $2 }')"
     generate_pyosphere_config
     ;;
     -r|--reset)
@@ -171,12 +174,13 @@ parse_args() {
     if [[ ! -z "${config_file}" ]]
     then
       pyosphere_config="${config_file}"
+    else
+      echo "No configuration file provided. Run with ${underline}-h${normal} for help."
     fi
     # begin_execution
     ;;
     *)
-    echo "Invalid argument."
-    print_usage
+    echo "Invalid argument. Run with ${underline}-h${normal} for help."
     ;;
   esac
 }

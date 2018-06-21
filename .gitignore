@@ -4,6 +4,7 @@ __pycache__/
 # Other unwanted stuff
 *Tests/
 *pyosphere/
+*pyosphere.config
 
 .idea
 .DS_Store
