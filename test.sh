@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # test.sh
 # Author(s): Mayank Kumar (@mayankk2308, github.com)
@@ -13,7 +13,7 @@ normal="$(tput sgr0)"
 
 # Script information
 script_version="1.0.0"
-test_dir="Tests/"
+test_dir="tests/"
 
 # Test information
 project_size=""
