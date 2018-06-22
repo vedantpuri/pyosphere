@@ -84,10 +84,21 @@ generate_pyosphere_config() {
 # }
 
 # Assigned: @vedantpuri
-# Prune symbolic links for incremental builds
-# prune_symbolic_links() {
-#   # Handle deleted links, etc.
-# }
+# Prune hard links for incremental builds
+prune_hard_links() {
+  # Handle deleted links
+  local pyosphere_location="${given_project_path}/${pyosphere_dir}"
+  echo "${bold}Pruning hard links...${normal}"
+  for file in "${pyosphere_location}"/*.py
+  do
+      num_hard_links=$(stat -l "${file}" | cut -d' ' -f2)
+      if [[ num_hard_links -eq 1 ]]
+      then
+        rm $file
+      fi
+  done
+  echo "Pruning complete."
+}
 
 # Generate hard links for all .py files
 generate_hard_links() {
