@@ -3,7 +3,6 @@
 # Author(s): Vedant Puri
 # Contributer(s): Mayank Kumar
 # Version: 1.0.0
-# Options: -v | --version, -h | --help, -cf= | --config-file=, -cl | --clean, -i | --init -e= | --execute=, -r | --reset
 
 # ----- ENVIRONMENT & CONSOLE
 
@@ -52,14 +51,6 @@ print_usage() {
 
 # ----- PYOSPHERE CONFIGURATION MANAGEMENT
 
-# Manages project path '/' inconsistency
-standardize_project_path() {
-  if [[ "${given_project_path:-1}" != "/" ]]
-  then
-    given_project_path="${given_project_path}/"
-  fi
-}
-
 # Assigned: @vedantpuri
 # Manage pyosphere configurations
 parse_pyosphere_config() {
@@ -81,7 +72,7 @@ parse_pyosphere_config() {
     exit
   else
     given_project_path="${project_path}"
-    standardize_project_path
+    [[ "${given_project_path:-1}" != "/" ]] && given_project_path="${given_project_path}/"
     echo "Project fetched."
   fi
   if [[ ! -z "${run_source}" ]]
@@ -138,7 +129,7 @@ generate_pyosphere_config() {
 # Prune hard links for incremental builds
 prune_hard_links() {
   local pyosphere_location="${given_project_path}${pyosphere_dir}"
-  echo "${bold}Pruning hard links...${normal}"
+  echo "${bold}Pruning build...${normal}"
   if [[ ! -d "${pyosphere_location}" ]]
   then
     echo "Pyosphere build not found. Cannot prune."
@@ -146,32 +137,28 @@ prune_hard_links() {
   fi
   for file in "${pyosphere_location}"*.py
   do
-    if [[ ! -f "${file}" ]]
-    then
-      continue
-    fi
-    local num_hard_links="$(stat -l "${file}" | cut -d' ' -f2)"
-    if [[ ${num_hard_links} -eq 1 ]]
-    then
-      rm "${file}"
-    fi
+    [[ ! -f "${file}" ]] && continue
+    local alias_file="${pyosphere_location}.$(basename ${file}).alias"
+    [[ -e "${alias_file}" ]] && continue
+    rm "${alias_file}"
+    rm "${file}"
   done
   echo "Pruning complete."
 }
 
 # Generate hard links for all .py files
 generate_hard_links() {
-  echo "${bold}Generating links...${normal}"
+  echo "${bold}Generating build files...${normal}"
   mkdir -p "${pyosphere_dir}"
   find "${given_project_path}" -name "*.py" | while read path
   do
-    link_path="${pyosphere_dir}$(basename "${path}")"
-    if [[ ! -f "${link_path}" ]]
-    then
-      ln "${path}" "${link_path}"
-    fi
+    local base_name="$(basename "${path}")"
+    local hard_link_path="${pyosphere_dir}${base_name}"
+    local sym_link_path="${pyosphere_dir}.${base_name}.alias"
+    [[ ! -f "${hard_link_path}" ]] && ln "${path}" "${hard_link_path}"
+    [[ ! -L "${sym_link_path}" ]] && ln -s "${path}" "${sym_link_path}"
   done
-  echo "Links generated."
+  echo "Build generated."
 }
 
 # Assigned: @mayankk2308
@@ -190,15 +177,10 @@ clean() {
 # Assigned: @mayankk2308
 # Reset project
 reset() {
+  echo "${bold}Resetting...${normal}"
   clean
-  if [[ -f "${pyosphere_config}" ]]
-  then
-    echo "${bold}Resetting...${normal}"
-    rm "${pyosphere_config}"
-    echo "Reset complete."
-  else
-    echo "No configuration file detected. Procedure complete."
-  fi
+  [[ -f "${pyosphere_config}" ]] && rm "${pyosphere_config}"
+  echo "Reset complete."
 }
 
 # ----- PYOSPHERE CONTROL FLOW
@@ -249,10 +231,7 @@ parse_args() {
     ;;
     -cf=*|--config-file=*|"")
     local config_file="${@#*=}"
-    if [[ ! -z "${config_file}" ]]
-    then
-      pyosphere_config="${config_file}"
-    fi
+    [[ ! -z "${config_file}" ]] && pyosphere_config="${config_file}"
     if [[ "${@}" != "" ]]
     then
       echo "No configuration file provided. Run with ${underline}-h${normal} for help."
