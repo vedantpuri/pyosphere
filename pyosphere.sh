@@ -100,7 +100,7 @@ parse_pyosphere_config() {
     echo "Binary not provided or invalid. Using ${underline}python${normal}."
   fi
   echo "${bold}Checking pruning preferences...${normal}"
-  if [[ "$always_prune" == true ]]
+  if [[ "${always_prune}" == true ]]
   then
     always_prune_pref=true
     echo "Pruned builds enabled."
