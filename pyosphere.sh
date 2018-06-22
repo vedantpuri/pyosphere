@@ -1,7 +1,6 @@
 #!/bin/bash
 # pyosphere.sh
-# Author(s): Vedant Puri
-# Contributer(s): Mayank Kumar
+# Authors: Mayank Kumar, Vedant Puri
 # Version: 1.0.0
 
 # ----- ENVIRONMENT & CONSOLE
@@ -121,16 +120,35 @@ generate_pyosphere_config() {
 # Assigned: @vedantpuri
 # Execute provided run source
 # Do everything except execute if $run_source not provided
-# execute() {
-#   # execute $run_source once links have been generated
-# }
+execute() {
+#   # Execute $given_run_source once links have been generated
+#   # Check if $given_run_source belongs to $given_project_path
+  file_count=$(find "${given_project_path}" -name "${given_run_source}" | wc -l)
+  if [[ $file_count -eq 0 ]]
+  then
+    echo "Error: "$(basename "${given_run_source}")" No such file found in ${given_project_path}"
+    exit
+  elif [[ $file_count -gt 1 ]]
+  then
+    echo "Error: Multipl instances of ${given_run_source} detected. Resolve ambiguity and Re-configure using absolute path."
+    exit
+  fi
+  echo "${bold}Running ${given_run_source}...${normal}"
+  command_to_run="${python_bin} ${given_run_source}"
+  $command_to_run
+  echo "Execution complete."
+
+}
 
 # Assigned: @vedantpuri
 # Prune hard links for incremental builds
 prune_hard_links() {
-  local pyosphere_location="${given_project_path}${pyosphere_dir}"
+  # local pyosphere_location="${given_project_path}${pyosphere_dir}"
+
+  # TODO: Prune .pyc files
+
   echo "${bold}Pruning build...${normal}"
-  if [[ ! -d "${pyosphere_location}" ]]
+  if [[ ! -d "${pyosphere_dir}" ]]
   then
     echo "Pyosphere build not found. Cannot prune."
     return
@@ -149,7 +167,14 @@ prune_hard_links() {
 # Generate hard links for all .py files
 generate_hard_links() {
   echo "${bold}Generating build files...${normal}"
-  mkdir -p "${pyosphere_dir}"
+  if [[ -z "$(ls -A "${given_project_path}")" ]]
+  then
+    echo "Empty Directory: No files to generate"
+    return
+  fi
+
+  # TODO: Check if no py files found
+
   find "${given_project_path}" -name "*.py" | while read path
   do
     local base_name="$(basename "${path}")"
@@ -187,18 +212,30 @@ reset() {
 
 # Assigned: @vedantpuri
 # Start pyosphere with environment set
-# begin_execution() {
+begin_execution() {
 #   # Execute necessary functions with environment settings
 #   # All functions are argument-free (excluding parse_args)
 #   # Print all issues + number of issues encountered
-#   ### Examples:
-#   ###         1 Issue:
-#   ###           - pyosphere.config not found
-#
-#   ###         2 Issues:
-#   ###           - Specified python binary not found
-#   ###           - Could not find any python files
-# }
+
+  # Parses config file + performs necessary sanity checks.
+  parse_pyosphere_config
+
+  # Assuming given_project_path ends with a '/'.
+  pyosphere_dir="${given_project_path}${pyosphere_dir}"
+  mkdir -p "${pyosphere_dir}"
+
+  # Generates hard links for files + performs necessary sanity checks.
+  # Will this be done everytime ?
+  generate_hard_links
+
+  # Prunes hard links if necessary
+  if [[ "${always_prune_pref}" == true ]]
+  then
+    prune_hard_links
+  fi
+
+  # execute
+}
 
 # Assigned: @mayankk2308
 # Parse script arguments
