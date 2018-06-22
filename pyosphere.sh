@@ -19,8 +19,8 @@ script_version="1.0.0"
 pyosphere_config="pyosphere.config"
 python_bin="python"
 given_run_source=""
-given_project_path="$(pwd)"
-always_clean_pref=false
+given_project_path="$(pwd)/"
+always_prune_pref=false
 pyosphere_dir="pyosphere/"
 
 # ----- SCRIPT SUPPORT
@@ -32,7 +32,7 @@ print_version() {
 
 # Print pyosphere.sh usage
 print_usage() {
-  echo "Usage: ${bold}./pyosphere.sh${normal} [-v|--version] [-h|--help] [-cf=|--config-file=] [-cl|--clean] [-i|--init -e=|--execute=] [-r|--reset]
+  echo "Usage: ${bold}./pyosphere.sh${normal} [-v|--version] [-h|--help] [-cf=|--config-file=] [-cl|--clean] [-i|--init -e=|--execute=] [-r|--reset] [-p|--prune]
   where:
   ${underline}-v${normal}        Prints script version
   ${underline}-h${normal}        Prints script usage
@@ -41,69 +41,73 @@ print_usage() {
   ${underline}-i${normal}        Initialize pyosphere for project
   ${underline}-i -e=${normal}    Initialize pyosphere for project
   ${underline}-r${normal}        Reset project to pre-pyosphere state
+  ${underline}-p${normal}        Prune project build
 
   ${bold}pyosphere.config${normal} Options:
   ${underline}python${normal}         Specify python binary/command (default = ${bold}python${normal})
   ${underline}run_source${normal}     Specify python binary/command
   ${underline}project_path${normal}   Specify python project path (default = ${bold}pwd${normal})
-  ${underline}always_clean${normal}   Specify clean settings for incremental builds (default = ${bold}false${normal})"
+  ${underline}always_prune${normal}   Specify pruning settings for incremental builds (default = ${bold}false${normal})"
 }
 
 # ----- PYOSPHERE CONFIGURATION MANAGEMENT
 
+# Manages project path '/' inconsistency
+standardize_project_path() {
+  if [[ "${given_project_path:-1}" != "/" ]]
+  then
+    given_project_path="${given_project_path}/"
+  fi
+}
+
 # Assigned: @vedantpuri
-# Manage pyosphere configurations - can likely source $pyosphere_config
+# Manage pyosphere configurations
 parse_pyosphere_config() {
-#   # parse $pyosphere_config
-#   # update $python, $run_source, $project_path, & $always_clean as necessary
-#   # call manage_relative_project_path to re-evaluate $project_path if needed
-#   # handle errors in config here
-
-  echo "Parsing ${pyosphere_config} ..."
-
-  # Import variables
-  source "${pyosphere_config}"
-
-  # Check if Project path exists
-  # Assuming absolute path provided
-  if [[ -de "${project_path}" ]]
+  echo "${bold}Parsing ${pyosphere_config}...${normal}"
+  if [[ -f "${pyosphere_config}" ]]
   then
+    source "${pyosphere_config}"
+  else
+    echo "Pyosphere configuration not available. Using defaults."
+    return
+  fi
+  echo "${bold}Fetching project...${normal}"
+  if [[ -z "${project_path}" ]]
+  then
+    echo "Path not provided. Using current working directory."
+  elif [[ ! -d "${project_path}" ]]
+  then
+    echo "Project directory does not exist. Re-check configuration."
+    exit
+  else
     given_project_path="${project_path}"
-  else
-    echo "Project path doesn't exist/ Incorrect path provided/ Absolute path not provided. Re-check pyosphere.config"
-    exit
+    standardize_project_path
+    echo "Project fetched."
   fi
-
-  # Check if the file to be executed exists
-  # Assuming absolute path provided
-  if [[ -e "${run_source}" ]]
+  if [[ ! -z "${run_source}" ]]
   then
+    echo "${bold}Setting execution script...${normal}"
     given_run_source="${run_source}"
-  else
-    echo "File doesn't exist/ Incorrect path provided/ Absolute path not provided. Re-check pyosphere.config."
-    exit
+    echo "Script set."
   fi
-
-  # Check if Python binary provided exists
-  count="$(compgen -c | grep -Fx "${python}" | wc -l)"
-  if [[ "${count}" -gt 0 ]]
+  echo "${bold}Setting python binary...${normal}"
+  full_python_bin_path="$(which "${python}")"
+  if [[ ! -z "${full_python_bin_path}" ]]
   then
-    python_bin="${python}"
+    python_bin="${full_python_bin_path}"
+    echo "Binary set."
   else
-    echo "Python binary doesn't exist/ Incorrect binary provided. Re-check pyosphere.config."
-    exit
+    echo "Binary not provided or invalid. Using ${underline}python${normal}."
   fi
-
-  # Check if `always_clean` is a boolean
-  if [[ "${always_clean}" == true || "${always_clean}" == false ]]
+  echo "${bold}Checking pruning preferences...${normal}"
+  if [[ "$always_prune" == true ]]
   then
-    always_clean_pref="${always_clean}"
+    always_prune_pref=true
+    echo "Pruned builds enabled."
   else
-    echo "Invalid type for 'always_clean. Re-check pyosphere.config."
-    exit
+    echo "Pruned builds disabled."
   fi
-
-  echo "Successfully parsed ${pyosphere_config}."
+  echo "Parse complete."
 
 }
 
@@ -117,7 +121,7 @@ generate_pyosphere_config() {
   echo -e "python=\"${python_bin}\"" >> "${pyosphere_config}"
   echo -e "run_source=\"${given_run_source}\"" >> "${pyosphere_config}"
   echo -e "project_path=\"${given_project_path}\"" >> "${pyosphere_config}"
-  echo -e "always_clean=${always_clean_pref}" >> "${pyosphere_config}"
+  echo -e "always_prune=${always_prune_pref}" >> "${pyosphere_config}"
   echo "Configuration generated."
 }
 
@@ -133,31 +137,41 @@ generate_pyosphere_config() {
 # Assigned: @vedantpuri
 # Prune hard links for incremental builds
 prune_hard_links() {
-  # Handle deleted links
-  if [[ "${given_project_path: -1}" == "/" ]]
-  then
-    local pyosphere_location="${given_project_path}${pyosphere_dir}"
-  else
-    local pyosphere_location="${given_project_path}/${pyosphere_dir}"
-  fi
+  local pyosphere_location="${given_project_path}${pyosphere_dir}"
   echo "${bold}Pruning hard links...${normal}"
+  if [[ ! -d "${pyosphere_location}" ]]
+  then
+    echo "Pyosphere build not found. Cannot prune."
+    return
+  fi
   for file in "${pyosphere_location}"*.py
   do
-      local num_hard_links="$(stat -l "${file}" | cut -d' ' -f2)"
-      if [[ $num_hard_links -eq 1 ]]
-      then
-        rm "${file}"
-      fi
+    if [[ ! -f "${file}" ]]
+    then
+      continue
+    fi
+    local num_hard_links="$(stat -l "${file}" | cut -d' ' -f2)"
+    if [[ ${num_hard_links} -eq 1 ]]
+    then
+      rm "${file}"
+    fi
   done
   echo "Pruning complete."
 }
 
 # Generate hard links for all .py files
 generate_hard_links() {
+  echo "${bold}Generating links...${normal}"
+  mkdir -p "${pyosphere_dir}"
   find "${given_project_path}" -name "*.py" | while read path
   do
-    ln "${path}" "${pyosphere_dir}$(basename "${path}")"
+    link_path="${pyosphere_dir}$(basename "${path}")"
+    if [[ ! -f "${link_path}" ]]
+    then
+      ln "${path}" "${link_path}"
+    fi
   done
+  echo "Links generated."
 }
 
 # Assigned: @mayankk2308
@@ -230,6 +244,9 @@ parse_args() {
     -r|--reset)
     reset
     ;;
+    -p|--prune)
+    prune_hard_links
+    ;;
     -cf=*|--config-file=*|"")
     local config_file="${@#*=}"
     if [[ ! -z "${config_file}" ]]
@@ -241,6 +258,10 @@ parse_args() {
       echo "No configuration file provided. Run with ${underline}-h${normal} for help."
       return
     fi
+    # for testing only
+    ## generate_hard_links
+    ## parse_pyosphere_config
+
     # begin_execution
     ;;
     *)

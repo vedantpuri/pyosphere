@@ -2,6 +2,7 @@
 __pycache__/
 
 # Other unwanted stuff
+*.py
 *tests/
 *pyosphere/
 *pyosphere.config
