@@ -60,7 +60,7 @@ parse_pyosphere_config() {
 #   # handle errors in config here
 
   echo "Parsing ${pyosphere_config} ..."
-  
+
   # Import variables
   source "${pyosphere_config}"
 
@@ -146,7 +146,7 @@ prune_hard_links() {
       local num_hard_links="$(stat -l "${file}" | cut -d' ' -f2)"
       if [[ $num_hard_links -eq 1 ]]
       then
-        rm "${$file}"
+        rm "${file}"
       fi
   done
   echo "Pruning complete."
