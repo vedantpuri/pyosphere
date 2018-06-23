@@ -141,13 +141,31 @@ execute() {
 }
 
 # Assigned: @vedantpuri
+# Prune .pyc for incremental builds
+prune_pyc() {
+  echo "${bold}Pruning '.pyc' files...${normal}"
+  if [[ ! -d "${pyosphere_dir}" ]]
+  then
+    echo "Pyosphere build not found. Cannot prune."
+    return
+  fi
+  for file in "${pyosphere_location}"*.pyc
+  do
+    [[ ! -f "${file}" ]] && continue
+    rm "${file}"
+  done
+  echo "Pruning complete."
+}
+
+
+# Assigned: @vedantpuri
 # Prune hard links for incremental builds
 prune_hard_links() {
   # local pyosphere_location="${given_project_path}${pyosphere_dir}"
 
   # TODO: Prune .pyc files
 
-  echo "${bold}Pruning build...${normal}"
+  echo "${bold}Pruning hard links...${normal}"
   if [[ ! -d "${pyosphere_dir}" ]]
   then
     echo "Pyosphere build not found. Cannot prune."
