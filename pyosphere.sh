@@ -20,6 +20,7 @@ given_run_source=""
 given_project_path="$(pwd)/"
 always_prune_pref=false
 pyosphere_dir="pyosphere/"
+output="/dev/stdout"
 
 # ----- SCRIPT SUPPORT
 
@@ -53,58 +54,58 @@ print_usage() {
 # Assigned: @vedantpuri
 # Manage pyosphere configurations
 parse_pyosphere_config() {
-  echo "${bold}Parsing ${pyosphere_config}...${normal}"
+  echo "${bold}Parsing ${pyosphere_config}...${normal}" > "${output}"
   if [[ -f "${pyosphere_config}" ]]
   then
     source "${pyosphere_config}"
   else
-    echo "Pyosphere configuration not available. Using defaults."
+    echo "Pyosphere configuration not available. Using defaults." > "${output}"
     return
   fi
-  echo "${bold}Fetching project...${normal}"
+  echo "${bold}Fetching project...${normal}" > "${output}"
   if [[ -z "${project_path}" ]]
   then
-    echo "Path not provided. Using current working directory."
+    echo "Path not provided. Using current working directory." > "${output}"
   elif [[ ! -d "${project_path}" ]]
   then
-    echo "Project directory does not exist. Re-check configuration."
+    echo "Project directory does not exist. Re-check configuration." > "${output}"
     exit
   else
     given_project_path="${project_path}"
     [[ "${given_project_path: -1}" != "/" ]] && given_project_path="${given_project_path}/"
-    echo "Project fetched."
+    echo "Project fetched." > "${output}"
   fi
   if [[ ! -z "${run_source}" ]]
   then
-    echo "${bold}Setting execution script...${normal}"
+    echo "${bold}Setting execution file...${normal}" > "${output}"
     given_run_source="${run_source}"
-    echo "Script set."
+    echo "File set." > "${output}"
   fi
-  echo "${bold}Setting python binary...${normal}"
+  echo "${bold}Setting python binary...${normal}" > "${output}"
   full_python_bin_path="$(which "${python}")"
   if [[ ! -z "${full_python_bin_path}" ]]
   then
     python_bin="${full_python_bin_path}"
-    echo "Binary set."
+    echo "Binary set." > "${output}"
   else
-    echo "Binary not provided or invalid. Using ${underline}python${normal}."
+    echo "Binary not provided or invalid. Using ${underline}python${normal}." > "${output}"
   fi
-  echo "${bold}Checking pruning preferences...${normal}"
+  echo "${bold}Checking pruning preferences...${normal}" > "${output}"
   if [[ "${always_prune}" == true ]]
   then
     always_prune_pref=true
-    echo "Pruned builds enabled."
+    echo "Pruned builds enabled." > "${output}"
   else
-    echo "Pruned builds disabled."
+    echo "Pruned builds disabled." > "${output}"
   fi
-  echo "Parse complete."
+  echo "Parse complete." > "${output}"
 
 }
 
 # Assigned: @mayankk2308
 # Auto-generate pyosphere configurations
 generate_pyosphere_config() {
-  echo "${bold}Generating pyosphere configuration...${normal}"
+  echo "${bold}Generating pyosphere configuration...${normal}" > "${output}"
   touch "${pyosphere_config}"
   > "${pyosphere_config}"
   echo -e "#!/bin/bash\n" >> "${pyosphere_config}"
@@ -112,7 +113,7 @@ generate_pyosphere_config() {
   echo -e "run_source=\"${given_run_source}\"" >> "${pyosphere_config}"
   echo -e "project_path=\"${given_project_path}\"" >> "${pyosphere_config}"
   echo -e "always_prune=${always_prune_pref}" >> "${pyosphere_config}"
-  echo "Configuration generated."
+  echo "Configuration generated." > "${output}"
 }
 
 # ----- PYOSPHERE PROJECT MANAGEMENT
@@ -124,24 +125,24 @@ execute() {
   file_count=$(find "${given_project_path}" -name "${given_run_source}" | wc -l)
   if [[ $file_count -eq 0 ]]
   then
-    echo "Error: "$(basename "${given_run_source}")" No such file found in ${given_project_path}"
+    echo "Error: "$(basename "${given_run_source}")" No such file found in ${given_project_path}" > "${output}"
     exit
   elif [[ $file_count -gt 1 ]]
   then
-    echo "Error: Multiple instances of ${given_run_source} detected. Resolve ambiguity and Re-configure using absolute path."
+    echo "Error: Multiple instances of ${given_run_source} detected. Resolve ambiguity and Re-configure using absolute path." > "${output}"
     exit
   fi
-  echo "${bold}Running ${given_run_source}...${normal}"
+  echo "${bold}Running ${given_run_source}...${normal}" > "${output}"
   command_to_run="${python_bin} ${given_run_source}"
   $command_to_run
-  echo "Execution complete."
+  echo "Execution complete." > "${output}"
 
 }
 
 # Assigned: @vedantpuri
 # Prune hard links + '.pyc' for incremental builds
 prune_build() {
-  echo "${bold}Pruning build...${normal}"
+  echo "${bold}Pruning build...${normal}" > "${output}"
   if [[ ! -d "${pyosphere_dir}" ]]
   then
     echo "Pyosphere build not found. Cannot prune."
@@ -157,12 +158,12 @@ prune_build() {
     [[ ! -f "${file}c" ]] && continue
     rm "${file}c"
   done
-  echo "Pruning complete."
+  echo "Pruning complete." > "${output}"
 }
 
 # Generate hard links for all .py files
 generate_build() {
-  echo "${bold}Generating build files...${normal}"
+  echo "${bold}Generating build files...${normal}" > "${output}"
   local is_python_project=false
   while read path
   do
@@ -173,8 +174,7 @@ generate_build() {
     [[ ! -f "${hard_link_path}" ]] && ln "${path}" "${hard_link_path}"
     [[ ! -L "${sym_link_path}" ]] && ln -s "${path}" "${sym_link_path}"
   done < <(find "${given_project_path}" -name "*.py")
-  echo "$is_python_project"
-  [[ $is_python_project == false ]] && echo "Build failed. Not a python project." || echo "Build generated."
+  [[ $is_python_project == false ]] && echo "Build failed. Not a python project." > "${output}" || echo "Build generated." > "${output}"
 }
 
 # Assigned: @mayankk2308
@@ -182,21 +182,21 @@ generate_build() {
 clean() {
   if [[ -d "${pyosphere_dir}" ]]
   then
-    echo "${bold}Cleaning...${normal}"
+    echo "${bold}Cleaning...${normal}" > "${output}"
     rm -r "${pyosphere_dir}"
-    echo "Clean successful."
+    echo "Clean successful." > "${output}"
   else
-    echo "Nothing to clean."
+    echo "Nothing to clean." > "${output}"
   fi
 }
 
 # Assigned: @mayankk2308
 # Reset project
 reset() {
-  echo "${bold}Resetting...${normal}"
+  echo "${bold}Resetting...${normal}" > "${output}"
   clean
   [[ -f "${pyosphere_config}" ]] && rm "${pyosphere_config}"
-  echo "Reset complete."
+  echo "Reset complete." > "${output}"
 }
 
 # ----- PYOSPHERE CONTROL FLOW
@@ -239,6 +239,10 @@ parse_args() {
     ;;
     -p|--prune)
     prune_build
+    ;;
+    -s|--silent)
+    output="/dev/null"
+    begin_execution
     ;;
     -cf=*|--config-file=*|"")
     local config_file="${@#*=}"
