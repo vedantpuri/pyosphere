@@ -162,7 +162,7 @@ generate_build() {
     local sym_link_path="${pyosphere_dir}.${base_name}.alias"
     [[ ! -f "${hard_link_path}" ]] && ln "${path}" "${hard_link_path}"
     [[ ! -L "${sym_link_path}" ]] && ln -s "${path}" "${sym_link_path}"
-  done < <(find "${given_project_path}" -name "*.py")
+  done < <(shopt -s nullglob && find "${given_project_path}" -name "*.py")
   [[ $is_python_project == false ]] && echo "Build failed. Not a python project." > "${output}" || echo "Build generated." > "${output}"
 }
 
