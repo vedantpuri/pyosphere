@@ -121,8 +121,6 @@ generate_pyosphere_config() {
 # Execute provided run source
 # Do everything except execute if $run_source not provided
 execute() {
-#   # Execute $given_run_source once links have been generated
-#   # Check if $given_run_source belongs to $given_project_path
   file_count=$(find "${given_project_path}" -name "${given_run_source}" | wc -l)
   if [[ $file_count -eq 0 ]]
   then
@@ -142,48 +140,41 @@ execute() {
 
 # Assigned: @vedantpuri
 # Prune hard links + '.pyc' for incremental builds
-pruner() {
-  # local pyosphere_location="${given_project_path}${pyosphere_dir}"
+prune_build() {
   echo "${bold}Pruning build...${normal}"
-  if [[ ! -d "${pyosphere_location}" ]]
+  if [[ ! -d "${pyosphere_dir}" ]]
   then
     echo "Pyosphere build not found. Cannot prune."
     return
   fi
-  for file in "${pyosphere_location}"*.py
+  for file in "${pyosphere_dir}"*.py
   do
     [[ ! -f "${file}" ]] && continue
-    if [[ "${given_run_source: -3}" == ".py" ]]
-    then
-      local alias_file="${pyosphere_location}.$(basename ${file}).alias"
-      [[ -e "${alias_file}" ]] && continue
-      rm "${alias_file}"
-      rm "${file}"
-    elif [[ "${given_run_source: -4}" == ".pyc" ]]
-      rm "${file}"
-    fi
+    local alias_file="${pyosphere_dir}.$(basename ${file}).alias"
+    [[ -e "${alias_file}" ]] && continue
+    rm "${alias_file}"
+    rm "${file}"
+    [[ ! -f "${file}c" ]] && continue
+    rm "${file}c"
   done
   echo "Pruning complete."
 }
 
 # Generate hard links for all .py files
-generate_hard_links() {
+generate_build() {
   echo "${bold}Generating build files...${normal}"
-  if [[ -z "$(find "${given_project_path}" -name "*.py")" ]]
-  then
-    echo "Empty Directory/ No '.py' files detected: No files to generate"
-    return
-  fi
-
-  find "${given_project_path}" -name "*.py" | while read path
+  local is_python_project=false
+  while read path
   do
+    is_python_project=true
     local base_name="$(basename "${path}")"
     local hard_link_path="${pyosphere_dir}${base_name}"
     local sym_link_path="${pyosphere_dir}.${base_name}.alias"
     [[ ! -f "${hard_link_path}" ]] && ln "${path}" "${hard_link_path}"
     [[ ! -L "${sym_link_path}" ]] && ln -s "${path}" "${sym_link_path}"
-  done
-  echo "Build generated."
+  done < <(find "${given_project_path}" -name "*.py")
+  echo "$is_python_project"
+  [[ $is_python_project == false ]] && echo "Build failed. Not a python project." || echo "Build generated."
 }
 
 # Assigned: @mayankk2308
@@ -213,30 +204,11 @@ reset() {
 # Assigned: @vedantpuri
 # Start pyosphere with environment set
 begin_execution() {
-#   # Execute necessary functions with environment settings
-#   # All functions are argument-free (excluding parse_args)
-#   # Print all issues + number of issues encountered
-
-  # Parses config file + performs necessary sanity checks.
   parse_pyosphere_config
-
-  # Assuming given_project_path ends with a '/'.
   pyosphere_dir="${given_project_path}${pyosphere_dir}"
-  echo "Creating ${pyosphere_dir}"
   mkdir -p "${pyosphere_dir}"
-
-  # Generates hard links for files + performs necessary sanity checks.
-  # Will this be done everytime ?
-  generate_hard_links
-
-  # Prunes hard links if necessary
-  echo "Checking pruning preferences"
-  if [[ "${always_prune_pref}" == true ]]
-  then
-    pruner
-  fi
-
-  # echo "Executing ${given_run_source}"
+  generate_build
+  [[ $always_prune_pref == true ]] && prune_build
   # execute
 }
 
@@ -254,7 +226,6 @@ parse_args() {
     clean
     ;;
     -i|--init|"-i -e="*|"--init -e="*|"-i --execute="*|"--init --execute="*)
-    # Could improve?
     given_run_source="$(echo "${@#*=}" | awk '{ print $2 }')"
     if [[ "${@}" != "-i" && "${@}" != "--init" && -z "${given_run_source}" ]]
     then
@@ -267,21 +238,19 @@ parse_args() {
     reset
     ;;
     -p|--prune)
-    pruner
+    prune_build
     ;;
     -cf=*|--config-file=*|"")
     local config_file="${@#*=}"
-    [[ ! -z "${config_file}" ]] && pyosphere_config="${config_file}"
-    if [[ "${@}" != "" ]]
+    if [[ ! -z "${config_file}" ]]
     then
-      echo "No configuration file provided. Run with ${underline}-h${normal} for help."
+      pyosphere_config="${config_file}"
+    elif [[ ! -z "${@}" ]]
+    then
+      echo "No configuration file provided."
       return
     fi
-    # for testing only
-    ## generate_hard_links
-    ## parse_pyosphere_config
-
-    # begin_execution
+    begin_execution
     ;;
     *)
     echo "Invalid argument. Run with ${underline}-h${normal} for help."
