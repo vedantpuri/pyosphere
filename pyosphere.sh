@@ -162,9 +162,6 @@ prune_pyc() {
 # Prune hard links for incremental builds
 prune_hard_links() {
   # local pyosphere_location="${given_project_path}${pyosphere_dir}"
-
-  # TODO: Prune .pyc files
-
   echo "${bold}Pruning hard links...${normal}"
   if [[ ! -d "${pyosphere_dir}" ]]
   then
@@ -190,7 +187,7 @@ generate_hard_links() {
     echo "Empty Directory/ No '.py' files detected: No files to generate"
     return
   fi
-  
+
   find "${given_project_path}" -name "*.py" | while read path
   do
     local base_name="$(basename "${path}")"
@@ -238,6 +235,7 @@ begin_execution() {
 
   # Assuming given_project_path ends with a '/'.
   pyosphere_dir="${given_project_path}${pyosphere_dir}"
+  echo "Creating ${pyosphere_dir}"
   mkdir -p "${pyosphere_dir}"
 
   # Generates hard links for files + performs necessary sanity checks.
@@ -245,11 +243,13 @@ begin_execution() {
   generate_hard_links
 
   # Prunes hard links if necessary
+  echo "Checking pruning preferences"
   if [[ "${always_prune_pref}" == true ]]
   then
     prune_hard_links
   fi
 
+  # echo "Executing ${given_run_source}"
   # execute
 }
 
