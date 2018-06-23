@@ -71,7 +71,7 @@ parse_pyosphere_config() {
     exit
   else
     given_project_path="${project_path}"
-    [[ "${given_project_path:-1}" != "/" ]] && given_project_path="${given_project_path}/"
+    [[ "${given_project_path: -1}" != "/" ]] && given_project_path="${given_project_path}/"
     echo "Project fetched."
   fi
   if [[ ! -z "${run_source}" ]]
@@ -141,29 +141,11 @@ execute() {
 }
 
 # Assigned: @vedantpuri
-# Prune .pyc for incremental builds
-prune_pyc() {
-  echo "${bold}Pruning '.pyc' files...${normal}"
-  if [[ ! -d "${pyosphere_dir}" ]]
-  then
-    echo "Pyosphere build not found. Cannot prune."
-    return
-  fi
-  for file in "${pyosphere_location}"*.pyc
-  do
-    [[ ! -f "${file}" ]] && continue
-    rm "${file}"
-  done
-  echo "Pruning complete."
-}
-
-
-# Assigned: @vedantpuri
-# Prune hard links for incremental builds
-prune_hard_links() {
+# Prune hard links + '.pyc' for incremental builds
+pruner() {
   # local pyosphere_location="${given_project_path}${pyosphere_dir}"
-  echo "${bold}Pruning hard links...${normal}"
-  if [[ ! -d "${pyosphere_dir}" ]]
+  echo "${bold}Pruning build...${normal}"
+  if [[ ! -d "${pyosphere_location}" ]]
   then
     echo "Pyosphere build not found. Cannot prune."
     return
@@ -171,10 +153,15 @@ prune_hard_links() {
   for file in "${pyosphere_location}"*.py
   do
     [[ ! -f "${file}" ]] && continue
-    local alias_file="${pyosphere_location}.$(basename ${file}).alias"
-    [[ -e "${alias_file}" ]] && continue
-    rm "${alias_file}"
-    rm "${file}"
+    if [[ "${given_run_source: -3}" == ".py" ]]
+    then
+      local alias_file="${pyosphere_location}.$(basename ${file}).alias"
+      [[ -e "${alias_file}" ]] && continue
+      rm "${alias_file}"
+      rm "${file}"
+    elif [[ "${given_run_source: -4}" == ".pyc" ]]
+      rm "${file}"
+    fi
   done
   echo "Pruning complete."
 }
@@ -246,7 +233,7 @@ begin_execution() {
   echo "Checking pruning preferences"
   if [[ "${always_prune_pref}" == true ]]
   then
-    prune_hard_links
+    pruner
   fi
 
   # echo "Executing ${given_run_source}"
@@ -280,7 +267,7 @@ parse_args() {
     reset
     ;;
     -p|--prune)
-    prune_hard_links
+    pruner
     ;;
     -cf=*|--config-file=*|"")
     local config_file="${@#*=}"
