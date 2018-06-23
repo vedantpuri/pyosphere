@@ -122,21 +122,10 @@ generate_pyosphere_config() {
 # Execute provided run source
 # Do everything except execute if $run_source not provided
 execute() {
-  file_count=$(find "${given_project_path}" -name "${given_run_source}" | wc -l)
-  if [[ $file_count -eq 0 ]]
-  then
-    echo "Error: "$(basename "${given_run_source}")" No such file found in ${given_project_path}" > "${output}"
-    exit
-  elif [[ $file_count -gt 1 ]]
-  then
-    echo "Error: Multiple instances of ${given_run_source} detected. Resolve ambiguity and Re-configure using absolute path." > "${output}"
-    exit
-  fi
+  [[ ! -f "${pyosphere_dir}${given_run_source}" ]] && echo "Execution file not present or specified. No program run." && return
   echo "${bold}Running ${given_run_source}...${normal}" > "${output}"
-  command_to_run="${python_bin} ${given_run_source}"
-  $command_to_run
+  "${python_bin}" "${pyosphere_dir}${given_run_source}"
   echo "Execution complete." > "${output}"
-
 }
 
 # Assigned: @vedantpuri
@@ -209,7 +198,7 @@ begin_execution() {
   mkdir -p "${pyosphere_dir}"
   generate_build
   [[ $always_prune_pref == true ]] && prune_build
-  # execute
+  execute
 }
 
 # Assigned: @mayankk2308
