@@ -130,7 +130,7 @@ execute() {
     exit
   elif [[ $file_count -gt 1 ]]
   then
-    echo "Error: Multipl instances of ${given_run_source} detected. Resolve ambiguity and Re-configure using absolute path."
+    echo "Error: Multiple instances of ${given_run_source} detected. Resolve ambiguity and Re-configure using absolute path."
     exit
   fi
   echo "${bold}Running ${given_run_source}...${normal}"
@@ -185,14 +185,12 @@ prune_hard_links() {
 # Generate hard links for all .py files
 generate_hard_links() {
   echo "${bold}Generating build files...${normal}"
-  if [[ -z "$(ls -A "${given_project_path}")" ]]
+  if [[ -z "$(find "${given_project_path}" -name "*.py")" ]]
   then
-    echo "Empty Directory: No files to generate"
+    echo "Empty Directory/ No '.py' files detected: No files to generate"
     return
   fi
-
-  # TODO: Check if no py files found
-
+  
   find "${given_project_path}" -name "*.py" | while read path
   do
     local base_name="$(basename "${path}")"
