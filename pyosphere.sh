@@ -183,6 +183,39 @@ clean() {
   fi
 }
 
+# Assigned: @vedantpuri
+# Check for aliasing + Resolve binary
+# NEEDS TESTING
+determine_binary() {
+  # Enable alias expansion
+  shopt -s expand_aliases
+
+  # Check if file containing aliases exists
+  if [[ -f "${HOME}/.bashrc" ]]
+  then
+    source ~/.bashrc
+  fi
+
+  binary_location="$(command -v "${1}")"
+  if [[ ! -z $binary_location ]]
+  then
+    read -r bin_status _<<<"${binary_location}"
+    if [[ "${bin_status}" == "alias" ]]
+    then
+      # Extract alias value and set python_bin to that
+      alias_value="${binary_location#*=}"
+      python_bin="${alias_value}"
+      # echo "Command aliased"
+      return
+    fi
+    python_bin="${binary_location}"
+    # echo "Command exists but not aliased"
+    return
+  fi
+  echo "Command doesn't exist"
+
+}
+
 # Assigned: @mayankk2308
 # Reset project
 reset() {

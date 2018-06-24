@@ -49,4 +49,4 @@ Not obligatory, but suggest an implementation the feature
 <br>
 <br>
 
-***Please View the [Pull Request Template](https://github.com/vedantpuri/pymport/blob/master/PULL_REQUEST_TEMPLATE.md), if you would like to implement a feature/ fix a bug.***
+***Please View the [Pull Request Template](https://github.com/vedantpuri/pyosphere/blob/master/.github/PULL_REQUEST_TEMPLATE.md), if you would like to implement a feature/ fix a bug.***
