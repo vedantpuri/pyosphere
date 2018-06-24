@@ -17,6 +17,8 @@ test_dir="tests/"
 
 # Test information
 project_size=""
+output="/dev/stdout"
+pyosphere_config="pyosphere.config"
 
 # Print the script version to console
 print_version() {
@@ -128,6 +130,68 @@ prepare_test() {
   esac
 }
 
+# ----- CONFIG TESTING
+
+# Generates specific config file according to test case
+generate_test_config() {
+  local python_bin="${1}"
+  local given_run_source="${2}"
+  local given_project_path="${3}"
+  local always_prune_pref="${4}"
+  echo "${bold}Generating pyosphere configuration...${normal}" > "${output}"
+  touch "${pyosphere_config}"
+  > "${pyosphere_config}"
+  echo -e "#!/bin/bash\n" >> "${pyosphere_config}"
+  echo -e "python=\"${python_bin}\"" >> "${pyosphere_config}"
+  echo -e "run_source=\"${given_run_source}\"" >> "${pyosphere_config}"
+  echo -e "project_path=\"${given_project_path}\"" >> "${pyosphere_config}"
+  echo -e "always_prune=${always_prune_pref}" >> "${pyosphere_config}"
+  echo "Configuration generated." > "${output}"
+}
+
+# Destroys Config file for specific test case
+destroy_test_config() {
+  echo "Destroying ${1}..."
+  rm "${pyosphere_config}"
+  echo "Destruction complete."
+}
+
+# Test cases for python binary
+test_incorrect_python() {
+  # Incorrect spelling
+  local python="pythn"
+  local run_source="${test_dir}Sources/main1.py"
+  local project_path="${test_dir}"
+  local pruning_pref=false
+  generate_test_config "${python}" "${run_source}" "${project_path}" "${pruning_pref}"
+  # TODO: Perform Check
+  destroy_test_config "test_incorrect_python: Incorrect spelling"
+
+  # Incorrect spelling with space
+  python="pyth n"
+  generate_test_config "${python}" "${run_source}" "${project_path}" "${pruning_pref}"
+  # TODO: Perform Check
+  destroy_test_config "test_incorrect_python: Incorrect spelling with space"
+
+  # Empty String
+  python=""
+  generate_test_config "${python}" "${run_source}" "${project_path}" "${pruning_pref}"
+  # TODO: Perform Check
+  destroy_test_config "test_incorrect_python: Empty String"
+
+  # Some other binary
+  python="java"
+  generate_test_config "${python}" "${run_source}" "${project_path}" "${pruning_pref}"
+  # TODO: Perform Check
+  destroy_test_config "test_incorrect_python: Non-python binary"
+
+  # Random String
+  python="#4829394"
+  generate_test_config "${python}" "${run_source}" "${project_path}" "${pruning_pref}"
+  # TODO: Perform Check
+  destroy_test_config "test_incorrect_python: Random string"
+}
+
 # Parse provided user arguments
 parse_args() {
   case "${@}" in
@@ -151,3 +215,4 @@ parse_args() {
 }
 
 parse_args "${@}"
+# test_incorrect_python
