@@ -156,42 +156,6 @@ destroy_test_config() {
   echo "Destruction complete."
 }
 
-# Test cases for python binary
-test_incorrect_python() {
-  # Incorrect spelling
-  local python="pythn"
-  local run_source="${test_dir}Sources/main1.py"
-  local project_path="${test_dir}"
-  local pruning_pref=false
-  generate_test_config "${python}" "${run_source}" "${project_path}" "${pruning_pref}"
-  # TODO: Perform Check
-  destroy_test_config "test_incorrect_python: Incorrect spelling"
-
-  # Incorrect spelling with space
-  python="pyth n"
-  generate_test_config "${python}" "${run_source}" "${project_path}" "${pruning_pref}"
-  # TODO: Perform Check
-  destroy_test_config "test_incorrect_python: Incorrect spelling with space"
-
-  # Empty String
-  python=""
-  generate_test_config "${python}" "${run_source}" "${project_path}" "${pruning_pref}"
-  # TODO: Perform Check
-  destroy_test_config "test_incorrect_python: Empty String"
-
-  # Some other binary
-  python="java"
-  generate_test_config "${python}" "${run_source}" "${project_path}" "${pruning_pref}"
-  # TODO: Perform Check
-  destroy_test_config "test_incorrect_python: Non-python binary"
-
-  # Random String
-  python="#4829394"
-  generate_test_config "${python}" "${run_source}" "${project_path}" "${pruning_pref}"
-  # TODO: Perform Check
-  destroy_test_config "test_incorrect_python: Random string"
-}
-
 # Parse provided user arguments
 parse_args() {
   case "${@}" in
@@ -215,4 +179,3 @@ parse_args() {
 }
 
 parse_args "${@}"
-# test_incorrect_python
