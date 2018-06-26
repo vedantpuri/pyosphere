@@ -82,12 +82,8 @@ parse_pyosphere_config() {
     echo "File set." > "${output}"
   fi
   echo "${bold}Setting python binary...${normal}" > "${output}"
-  if [[ ! "$("${python}" --version 2>&1)" =~ "Python" ]]
-  then
-    echo "Binary not provided or invalid. Using ${underline}python${normal}." > "${output}"
-  fi
   full_python_bin_path="$(which "${python}")"
-  if [[ ! -z "${full_python_bin_path}" ]]
+  if [[ ! -z "${full_python_bin_path}" && "$("${python}" --version 2>&1)" =~ "Python" ]]
   then
     python_bin="${full_python_bin_path}"
     echo "Binary set." > "${output}"
