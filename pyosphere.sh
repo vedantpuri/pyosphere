@@ -139,6 +139,8 @@ prune_build() {
     echo "Pyosphere build not found. Cannot prune."
     return
   fi
+  local pycache_dir="${pyosphere_dir}__pycache__"
+  [[ -d "${pycache_dir}" ]] && rm -r "${pycache_dir}"
   for file in "${pyosphere_dir}"*.py
   do
     [[ ! -f "${file}" ]] && continue
