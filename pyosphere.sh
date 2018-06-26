@@ -122,11 +122,11 @@ generate_pyosphere_config() {
 execute() {
   [[ ! -f "${pyosphere_dir}${given_run_source}" ]] && echo "Execution file not present or specified. No program run." && return
   echo "${bold}Running ${given_run_source}...${normal}" > "${output}"
-  echo -e "\n"
-  echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+  echo -e "\n" > "${output}"
+  echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" > "${output}"
   "${python_bin}" "${pyosphere_dir}${given_run_source}"
-  echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-  echo -e "\n"
+  echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" > "${output}"
+  echo -e "\n" > "${output}"
   echo "Execution complete." > "${output}"
 }
 
