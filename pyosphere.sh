@@ -38,7 +38,7 @@ print_usage() {
   ${underline}-cf=${normal}      Executes with specified config file (default = ${bold}pyosphere.config${normal})
   ${underline}-cl${normal}       Clean current working directory
   ${underline}-i${normal}        Initialize pyosphere for project
-  ${underline}-i -e=${normal}    Initialize pyosphere for project
+  ${underline}-ie=${normal}       Initialize pyosphere for project with name of main .py execution source
   ${underline}-r${normal}        Reset project to pre-pyosphere state
   ${underline}-p${normal}        Prune project build
 
@@ -217,13 +217,13 @@ parse_args() {
     -cl|--clean)
     clean
     ;;
-    -i|--init|"-i -e="*|"--init -e="*|"-i --execute="*|"--init --execute="*)
-    given_run_source="$(echo "${@#*=}" | awk '{ print $2 }')"
-    if [[ "${@}" != "-i" && "${@}" != "--init" && -z "${given_run_source}" ]]
-    then
-      echo "No execution file provided. Run with ${underline}-h${normal} for help."
-      return
-    fi
+    -i|--init)
+    generate_pyosphere_config
+    ;;
+    -ie=*|--init-exec=*)
+    local execution_file="${@#*=}"
+    [[ -z "${execution_file}" ]] && echo "No run source provided." && return
+    given_run_source="${execution_file}"
     generate_pyosphere_config
     ;;
     -r|--reset)
@@ -236,16 +236,13 @@ parse_args() {
     output="/dev/null"
     begin_execution
     ;;
-    -cf=*|--config-file=*|"")
+    -cf=*|--config-file=*)
     local config_file="${@#*=}"
-    if [[ ! -z "${config_file}" ]]
-    then
-      pyosphere_config="${config_file}"
-    elif [[ ! -z "${@}" ]]
-    then
-      echo "No configuration file provided."
-      return
-    fi
+    [[ -z "${config_file}" ]] && echo "No configuration file provided." && return
+    pyosphere_config="${config_file}"
+    begin_execution
+    ;;
+    "")
     begin_execution
     ;;
     *)
