@@ -166,7 +166,7 @@ generate_build() {
     [[ ! -L "${sym_link_path}" ]] && ln -s "${path}" "${sym_link_path}"
   done < <(shopt -s nullglob && find "${given_project_path}" -name "*.py")
   # shopt -u nullglob ??
-  [[ $is_python_project == false ]] && rm -r "${pyosphere_dir}" && echo "Build failed. Not a python project." > "${output}" || echo "Build generated." > "${output}"
+  [[ $is_python_project == false ]] && rm -r "${pyosphere_dir}" && echo "Build failed. Not a python project." && exit > "${output}" || echo "Build generated." > "${output}"
 }
 
 # Assigned: @mayankk2308
