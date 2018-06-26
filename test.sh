@@ -88,10 +88,10 @@ generate_test_files() {
     done
     for (( func_num=1; func_num<="${file_func_count}"; func_num++ ))
     do
-      echo "\n" >> "${program_file}"
-      echo "def ${file_prefix}${file_num}_func${func_num}():\n\tprint(\"Inside func${func_num}\")" >> "${program_file}"
+      echo -e "\n" >> "${program_file}"
+      echo -e "def ${file_prefix}${file_num}_func${func_num}():\n\tprint(\"Inside func${func_num}\")" >> "${program_file}"
     done
-    echo "\n" >> "${program_file}"
+    echo -e "\n" >> "${program_file}"
   done
 }
 
@@ -103,7 +103,7 @@ prepare_test() {
     generate_test_files "Libraries" "lib" 3 3 3 1
     generate_test_files "Sources" "main" 1 0 0 0
     local main_program="from lib1 import lib1_value1\nimport lib2\nprint(lib1_value1)\nlib2.lib2_func1()"
-    echo "${main_program}" > "${test_dir}Sources/main1.py"
+    echo -e "${main_program}" > "${test_dir}Sources/main1.py"
     echo "Small test generated."
     ;;
     ""|"medium")
@@ -111,7 +111,7 @@ prepare_test() {
     generate_test_files "Libraries" "lib" 20 5 5 5
     generate_test_files "Sources" "main" 1 0 0 0
     local main_program="from lib7 import lib7_value4\nimport lib19\nprint(lib7_value4)\nlib19.lib19_func5()"
-    echo "${main_program}" > "${test_dir}Sources/main1.py"
+    echo -e "${main_program}" > "${test_dir}Sources/main1.py"
     echo "Medium test generated."
     ;;
     "large")
@@ -119,7 +119,7 @@ prepare_test() {
     generate_test_files "Libraries" "lib" 100 20 20 10
     generate_test_files "Sources" "main" 1 0 0 0
     local main_program="from lib97 import lib97_value20\nimport lib58\nprint(lib97_value20)\nlib58.lib19_func7()"
-    echo "${main_program}" > "${test_dir}Sources/main1.py"
+    echo -e "${main_program}" > "${test_dir}Sources/main1.py"
     echo "Large test generated."
     ;;
     *)
