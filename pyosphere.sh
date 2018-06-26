@@ -82,6 +82,10 @@ parse_pyosphere_config() {
     echo "File set." > "${output}"
   fi
   echo "${bold}Setting python binary...${normal}" > "${output}"
+  if [[ ! "$("${python}" --version 2>&1)" =~ "Python" ]]
+  then
+    echo "Binary not provided or invalid. Using ${underline}python${normal}." > "${output}"
+  fi
   full_python_bin_path="$(which "${python}")"
   if [[ ! -z "${full_python_bin_path}" ]]
   then
@@ -99,7 +103,6 @@ parse_pyosphere_config() {
     echo "Pruned builds disabled." > "${output}"
   fi
   echo "Parse complete." > "${output}"
-
 }
 
 # Assigned: @mayankk2308
@@ -120,7 +123,6 @@ generate_pyosphere_config() {
 
 # Assigned: @vedantpuri
 # Execute provided run source
-# Do everything except execute if $run_source not provided
 execute() {
   [[ ! -f "${pyosphere_dir}${given_run_source}" ]] && echo "Execution file not present or specified. No program run." && return
   echo "${bold}Running ${given_run_source}...${normal}" > "${output}"
@@ -167,7 +169,8 @@ generate_build() {
     [[ ! -f "${hard_link_path}" ]] && ln "${path}" "${hard_link_path}"
     [[ ! -L "${sym_link_path}" ]] && ln -s "${path}" "${sym_link_path}"
   done < <(shopt -s nullglob && find "${given_project_path}" -name "*.py")
-  [[ $is_python_project == false ]] && echo "Build failed. Not a python project." > "${output}" || echo "Build generated." > "${output}"
+  # shopt -u nullglob ??
+  [[ $is_python_project == false ]] && rm -r "${pyosphere_dir}" && echo "Build failed. Not a python project." > "${output}" || echo "Build generated." > "${output}"
 }
 
 # Assigned: @mayankk2308
@@ -181,39 +184,6 @@ clean() {
   else
     echo "Nothing to clean." > "${output}"
   fi
-}
-
-# Assigned: @vedantpuri
-# Check for aliasing + Resolve binary
-# NEEDS TESTING
-determine_binary() {
-  # Enable alias expansion
-  shopt -s expand_aliases
-
-  # Check if file containing aliases exists
-  if [[ -f "${HOME}/.bashrc" ]]
-  then
-    source ~/.bashrc
-  fi
-
-  binary_location="$(command -v "${1}")"
-  if [[ ! -z $binary_location ]]
-  then
-    read -r bin_status _<<<"${binary_location}"
-    if [[ "${bin_status}" == "alias" ]]
-    then
-      # Extract alias value and set python_bin to that
-      alias_value="${binary_location#*=}"
-      python_bin="${alias_value}"
-      # echo "Command aliased"
-      return
-    fi
-    python_bin="${binary_location}"
-    # echo "Command exists but not aliased"
-    return
-  fi
-  echo "Command doesn't exist"
-
 }
 
 # Assigned: @mayankk2308
