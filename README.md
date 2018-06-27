@@ -62,23 +62,23 @@ This runs your specified `run_source` according to the configuration within **py
 
 ### Options
 - #### Initialize pyosphere (`-i|--init`)
-Generates a default **pyosphere.config** file in current directory.
+  Generates a default **pyosphere.config** file in current directory.
 - #### Initialize Execution (`-ie=|--init-exec=`)
-Initializes pyosphere in current dir + Specifies which python file to run in **pyosphere.config**.
+  Initializes pyosphere in current dir + Specifies which python file to run in **pyosphere.config**.
 - #### Configuration (`-cf=|--config-file=`)
-Provides path to **pyosphere.config** which is then parsed to execute the `run_source` mentioned within.
+  Provides path to **pyosphere.config** which is then parsed to execute the `run_source` mentioned within.
 - #### Prune project (`-p|--prune`)
-Gets rid of redundant files from the **pyosphere** directory.
+  Gets rid of redundant files from the **pyosphere** directory.
 - #### Clean project (`-cl|--clean`)
-Cleans the project, i.e. Deletes the **pyosphere** directory from the project.
+  Cleans the project, i.e. Deletes the **pyosphere** directory from the project.
 - #### Reset project (`-r|--reset`)
-Cleans + Removes **pyosphere.config**.
+  Cleans + Removes **pyosphere.config**.
 - #### Silent (`-s|--silent`)
-Executes silently, only output seen is that from python execution.
+  Executes silently, only output seen is that from python execution.
 - #### Script Version (`-v|--version`)
-Prints the current version of **pyosphere.sh**.
+  Prints the current version of **pyosphere.sh**.
 - #### Help (`-h|--help`)
-Prints a manual of how to use the script.
+  Prints a manual of how to use the script.
 
 ## Limitations
 Due to the semantics of the script it fails to work as expected in projects which have:
