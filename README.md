@@ -9,7 +9,7 @@ Python projects that have complex codebase directory structures introduce a fair
 ## Installation
 **pyosphere.sh** can be installed or deployed in many ways:
 
-### Homebrew (Coming Soon)
+### Homebrew
 Install with [homebrew](https://brew.sh):
 ```bash
 brew tap vedantpuri/concoctions
@@ -19,12 +19,12 @@ brew install pyosphere
 ### Manual System Install
 For **macOS**, you can install from the repo directly:
 ```bash
-mkdir -p -m 775 /usr/local/bin/ && curl -s "https://api.github.com/repos/vedantpuri/pyosphere/releases/latest" | grep '"browser_download_url":' | sed -E 's/.*"([^"]+)".*/\1/' | xargs curl -L -s -0 > /usr/local/bin/pyosphere && chmod +x /usr/local/bin/pyosphere && chmod 700 /usr/local/bin/pyosphere
+curl -s "https://api.github.com/repos/vedantpuri/pyosphere/releases/latest" | grep '"browser_download_url":' | sed -E 's/.*"([^"]+)".*/\1/' | xargs curl -L -s -0 > pyosphere && mv pyosphere /usr/local/bin/ && chmod 700 /usr/local/bin/pyosphere && chmod +x /usr/local/bin/pyosphere
 ```
 
-For **Linux**, you can do the same for the local user (requires `curl`, `sed`, `grep`, and `xargs`):
+**Linux** users may prefer replacing `/usr/local/bin/` to `~/bin/` (requires `curl`, `sed`, `grep`, and `xargs`):
 ```bash
-mkdir -p ~/bin && curl -s "https://api.github.com/repos/vedantpuri/pyosphere/releases/latest" | grep '"browser_download_url":' | sed -E 's/.*"([^"]+)".*/\1/' | xargs curl -L -s -0 > ~/bin/pyosphere && chmod +x ~/bin/pyosphere && chmod 700 ~/pyosphere
+curl -s "https://api.github.com/repos/vedantpuri/pyosphere/releases/latest" | grep '"browser_download_url":' | sed -E 's/.*"([^"]+)".*/\1/' | xargs curl -L -s -0 > pyosphere && mv pyosphere ~/bin/ && chmod 700 ~/bin/pyosphere && chmod +x ~/bin/pyosphere
 ```
 
 You can also download specific versions to your project:
@@ -98,7 +98,7 @@ pyosphere -cf="myconfig"
   Print script version
 - #### Help (`-h|--help`)
   Print script usage
-  
+
 You can tune the following options in your configuration file:
 - #### python_bin (default = `python`)
   Specify **python** binary to use (such as **python**, **python3**, or their full paths)
