@@ -1,4 +1,4 @@
-![Header](https://raw.githubusercontent.com/vedantpuri/pyosphere/master/resources/hero.png)
+![Header](https://raw.githubusercontent.com/vedantpuri/pyosphere/master/resources/header.png)
 
 A script that simulates a flatted development environment to enable easy relative imports in **python**.
 
