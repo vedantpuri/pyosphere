@@ -51,7 +51,6 @@ print_usage() {
 
 # ----- PYOSPHERE CONFIGURATION MANAGEMENT
 
-# Assigned: @vedantpuri
 # Manage pyosphere configurations
 parse_pyosphere_config() {
   echo "${bold}Parsing ${pyosphere_config}...${normal}" > "${output}"
@@ -122,15 +121,12 @@ generate_pyosphere_config() {
 execute() {
   [[ ! -f "${pyosphere_dir}${given_run_source}" ]] && echo "Execution file not present or specified. No program run." && return
   echo "${bold}Running ${given_run_source}...${normal}" > "${output}"
-  echo -e "\n" > "${output}"
-  echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" > "${output}"
-  "${python_bin}" "${pyosphere_dir}${given_run_source}"
-  echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" > "${output}"
-  echo -e "\n" > "${output}"
+  echo -e "\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" > "${output}"
+  "${python_bin}" -B "${pyosphere_dir}${given_run_source}"
+  echo -e "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n" > "${output}"
   echo "Execution complete." > "${output}"
 }
 
-# Assigned: @vedantpuri
 # Prune hard links + '.pyc' for incremental builds
 prune_build() {
   echo "${bold}Pruning build...${normal}" > "${output}"
@@ -139,8 +135,6 @@ prune_build() {
     echo "Pyosphere build not found. Cannot prune."
     return
   fi
-  local pycache_dir="${pyosphere_dir}__pycache__"
-  [[ -d "${pycache_dir}" ]] && rm -r "${pycache_dir}"
   for file in "${pyosphere_dir}"*.py
   do
     [[ ! -f "${file}" ]] && continue
@@ -148,8 +142,6 @@ prune_build() {
     [[ -e "${alias_file}" ]] && continue
     rm "${alias_file}"
     rm "${file}"
-    [[ ! -f "${file}c" ]] && continue
-    rm "${file}c"
   done
   echo "Pruning complete." > "${output}"
 }
@@ -167,11 +159,9 @@ generate_build() {
     [[ ! -f "${hard_link_path}" ]] && ln "${path}" "${hard_link_path}"
     [[ ! -L "${sym_link_path}" ]] && ln -s "${path}" "${sym_link_path}"
   done < <(shopt -s nullglob && find "${given_project_path}" -name "*.py")
-  # shopt -u nullglob ??
   [[ $is_python_project == false ]] && rm -r "${pyosphere_dir}" && echo "Build failed. Not a python project." && exit > "${output}" || echo "Build generated." > "${output}"
 }
 
-# Assigned: @mayankk2308
 # Clean project
 clean() {
   if [[ -d "${pyosphere_dir}" ]]
@@ -184,7 +174,6 @@ clean() {
   fi
 }
 
-# Assigned: @mayankk2308
 # Reset project
 reset() {
   echo "${bold}Resetting...${normal}" > "${output}"
@@ -195,7 +184,6 @@ reset() {
 
 # ----- PYOSPHERE CONTROL FLOW
 
-# Assigned: @vedantpuri
 # Start pyosphere with environment set
 begin_execution() {
   parse_pyosphere_config
@@ -206,7 +194,6 @@ begin_execution() {
   execute
 }
 
-# Assigned: @mayankk2308
 # Parse script arguments
 parse_args() {
   case "${@}" in

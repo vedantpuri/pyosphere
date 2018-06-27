@@ -118,7 +118,7 @@ prepare_test() {
     echo "${bold}Preparing large test..${normal}"
     generate_test_files "Libraries" "lib" 100 20 20 10
     generate_test_files "Sources" "main" 1 0 0 0
-    local main_program="from lib97 import lib97_value20\nimport lib58\nprint(lib97_value20)\nlib58.lib19_func7()"
+    local main_program="from lib97 import lib97_value20\nimport lib58\nprint(lib97_value20)\nlib58.lib58_func7()"
     echo -e "${main_program}" > "${test_dir}Sources/main1.py"
     echo "Large test generated."
     ;;
