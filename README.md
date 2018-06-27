@@ -1,6 +1,6 @@
 ![Header](https://raw.githubusercontent.com/vedantpuri/pyosphere/master/resources/header.png)
 
-Python projects that have complex codebase directory structures introduce a fairly common problem with **imports** within the project. While providing absolute paths is recommended, it is cumbersome, repetitive, and rather **boilerplate**. Absolute imports may also decrease application portability. **pyosphere.sh** mitigates these problems by simply providing a flattened execution environment, allowing all files to relatively import each other trivially, while allowing developers to maintain their choice of directory structure.
+Python projects that have complex codebase directory structures introduce a fairly common problem with **imports** within the project. While providing absolute paths is recommended, it is cumbersome, repetitive, and rather **boilerplate**. Absolute imports may also decrease application portability. **pyosphere.sh** mitigates these issues by simply providing a flattened execution environment, allowing all files to relatively import each other trivially, while allowing developers to maintain their choice of directory structure.
 
 ## Requirements
 - macOS or Linux
@@ -80,33 +80,33 @@ pyosphere -cf="myconfig"
 ```
 
 ### Options
-- ##### Initialize pyosphere (`-i|--init`)
+- #### Initialize pyosphere (`-i|--init`)
   Generates a default **pyosphere.config** file in current directory
 - #### Initialize Execution (`-ie=|--init-exec=`)
   Initializes pyosphere in current dir and specify which python file to run in configuration file
-- ##### Configuration (`-cf=|--config-file=`)
+- #### Configuration (`-cf=|--config-file=`)
   Specify path to configuration file
-- ##### Prune project (`-p|--prune`)
+- #### Prune project (`-p|--prune`)
   Remove unused project files from future builds
-- ##### Clean project (`-cl|--clean`)
+- #### Clean project (`-cl|--clean`)
   Clean pyosphere build
-- ##### Reset project (`-r|--reset`)
+- #### Reset project (`-r|--reset`)
   Reset project to its state prior to use of pyosphere
-- ##### Silent (`-s|--silent`)
+- #### Silent (`-s|--silent`)
   Silence pyosphere echo messages while executing project
-- ##### Version (`-v|--version`)
+- #### Version (`-v|--version`)
   Print script version
-- ##### Help (`-h|--help`)
+- #### Help (`-h|--help`)
   Print script usage
 
 You can tune the following options in your configuration file:
-- ##### python_bin (default = `python`)
+- #### python_bin (default = `python`)
   Specify **python** binary to use (such as **python**, **python3**, or their full paths)
-- ##### project_path (default = `pwd`)
+- #### project_path (default = `pwd`)
   Specify project path if different
-- ##### always_prune (default = `false`)
+- #### always_prune (default = `false`)
   Specify preference to prune (`-p|--prune`) every build
-- ##### run_source
+- #### run_source
   Specify python file to run on executing build
 
 Not providing one or more of these fields is acceptable and default settings will be inferred in such cases.
