@@ -12,8 +12,8 @@ Python projects that have complex codebase directory structures introduce a fair
 ### Homebrew (Coming Soon)
 Install with [homebrew](https://brew.sh):
 ```bash
-brew tap vedantpuri/brew-repo
-brew install pyosphere.sh
+brew tap vedantpuri/concoctions
+brew install pyosphere
 ```
 
 ### Manual System Install
@@ -98,9 +98,7 @@ pyosphere -cf="myconfig"
   Print script version
 - #### Help (`-h|--help`)
   Print script usage
-
-<br>
-
+  
 You can tune the following options in your configuration file:
 - #### python_bin (default = `python`)
   Specify **python** binary to use (such as **python**, **python3**, or their full paths)
