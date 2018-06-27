@@ -81,9 +81,9 @@ pyosphere -cf="myconfig"
 
 ### Options
 - #### Initialize pyosphere (`-i|--init`)
-  Generates a default **pyosphere.config** file in current directory
+  Generate a default **pyosphere.config** file in current directory
 - #### Initialize Execution (`-ie=|--init-exec=`)
-  Initializes pyosphere in current dir and specify which python file to run in configuration file
+  Initialize pyosphere in current dir and specify which python file to run in configuration file
 - #### Configuration (`-cf=|--config-file=`)
   Specify path to configuration file
 - #### Prune project (`-p|--prune`)
@@ -99,6 +99,7 @@ pyosphere -cf="myconfig"
 - #### Help (`-h|--help`)
   Print script usage
 
+<br>
 You can tune the following options in your configuration file:
 - #### python_bin (default = `python`)
   Specify **python** binary to use (such as **python**, **python3**, or their full paths)
