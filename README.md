@@ -63,7 +63,7 @@ This runs your specified `run_source` according to the configuration within **py
 ### Options
 - #### Initialize pyosphere (`-i|--init`)
 Generates a default **pyosphere.config** file in current directory.
-- #### Initialize Execution(`-ie=|--init-exec=`)
+- #### Initialize Execution (`-ie=|--init-exec=`)
 Initializes pyosphere in current dir + Specifies which python file to run in **pyosphere.config**.
 - #### Configuration (`-cf=|--config-file=`)
 Provides path to **pyosphere.config** which is then parsed to execute the `run_source` mentioned within.
