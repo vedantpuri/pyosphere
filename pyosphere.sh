@@ -100,7 +100,6 @@ parse_pyosphere_config() {
   echo "Parse complete." > "${output}"
 }
 
-# Assigned: @mayankk2308
 # Auto-generate pyosphere configurations
 generate_pyosphere_config() {
   echo "${bold}Generating pyosphere configuration...${normal}" > "${output}"
@@ -116,7 +115,6 @@ generate_pyosphere_config() {
 
 # ----- PYOSPHERE PROJECT MANAGEMENT
 
-# Assigned: @vedantpuri
 # Execute provided run source
 execute() {
   [[ ! -f "${pyosphere_dir}${given_run_source}" ]] && echo "Execution file not present or specified. No program run." && return
