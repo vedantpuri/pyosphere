@@ -100,6 +100,7 @@ pyosphere -cf="myconfig"
   Print script usage
 
 <br>
+
 You can tune the following options in your configuration file:
 - #### python_bin (default = `python`)
   Specify **python** binary to use (such as **python**, **python3**, or their full paths)
