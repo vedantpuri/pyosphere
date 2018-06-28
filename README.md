@@ -114,7 +114,7 @@ Not providing one or more of these fields is acceptable and default settings wil
 ## Limitations
 Due to the semantics of the script it fails to work as expected in projects which have:
 - Multiple files with the **same name**
-- Using hard-coded file paths in your projects (use `os.path` instead to generalize)
+- Hard-coded file paths (use `os.path` instead to generalize)
 
 ## Contributing
 This is an open-source project and contribution is cordially welcome. Refer to [contribution guidelines](https://github.com/vedantpuri/pyosphere/blob/master/.github/CONTRIBUTING.md) for further details on how to contribute. Also be sure to view the [code of conduct.](https://github.com/vedantpuri/pyosphere/blob/master/CODE_OF_CONDUCT.md)

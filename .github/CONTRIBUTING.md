@@ -3,7 +3,7 @@ To contribute, follow the order below:
 
 ## Reporting
 - Firstly report a bug/ suggest a feature in the issues section
-- Follow the [issue template](https://github.com/vedantpuri/pyosphere/blob/master/.github/ISSUE_TEMPLATE.md) to do so (Feature Request Template included within Issue template)
+- Follow the corresponding [issue template](https://github.com/vedantpuri/pyosphere/tree/master/.github/ISSUE_TEMPLATE) to do so 
 - Use appropriate labels
 
 ## Developing

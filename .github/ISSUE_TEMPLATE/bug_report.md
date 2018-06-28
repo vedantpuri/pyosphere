@@ -1,6 +1,6 @@
 ---
-name: Bug report
-about: Create a report to help us improve
+Name: Bug report
+About: Create a report to help us improve
 
 ---
 
@@ -14,15 +14,15 @@ Steps to reproduce the behavior:
 3. Scroll down to '....'
 4. See error
 
-**Expected behavior**
+**Expected behavior**  
 A clear and concise description of what you expected to happen.
 
-**Screenshots**
+**Screenshots**  
 If applicable, add screenshots to help explain your problem.
 
 **Specifications (please complete the following information):**
  - OS: [e.g. macOS]
  - Version [e.g. 10.13.5]
 
-**Additional context**
+**Additional context**  
 Add any other context about the problem here.
