@@ -1,5 +1,6 @@
 ![Header](https://raw.githubusercontent.com/vedantpuri/pyosphere/master/resources/header.png)
-
+![Script Version](https://img.shields.io/badge/Version-1.0.0-blue.svg?style=for-the-badge) ![Github All Releases](https://img.shields.io/github/downloads/vedantpuri/pyosphere/total.svg?style=for-the-badge)
+# Pyosphere
 Python projects that have complex codebase directory structures introduce a fairly common problem with **imports** within the project. While providing absolute paths is recommended, it is cumbersome, repetitive, and rather **boilerplate**. Absolute imports may also decrease application portability. **pyosphere.sh** mitigates these issues by simply providing a flattened execution environment, allowing all files to relatively import each other trivially, while allowing developers to maintain their choice of directory structure.
 
 ## Requirements
@@ -24,7 +25,7 @@ curl -s "https://api.github.com/repos/vedantpuri/pyosphere/releases/latest" | gr
 
 **Linux** users may prefer replacing `/usr/local/bin/` to `~/bin/` (requires `curl`, `sed`, `grep`, and `xargs`):
 ```bash
-curl -s "https://api.github.com/repos/vedantpuri/pyosphere/releases/latest" | grep '"browser_download_url":' | sed -E 's/.*"([^"]+)".*/\1/' | xargs curl -L -s -0 > pyosphere && mv pyosphere ~/bin/ && chmod 700 ~/bin/pyosphere && chmod +x ~/bin/pyosphere
+mkdir -p ~/bin && curl -s "https://api.github.com/repos/vedantpuri/pyosphere/releases/latest" | grep '"browser_download_url":' | sed -E 's/.*"([^"]+)".*/\1/' | xargs curl -L -s -0 > pyosphere && mv pyosphere ~/bin/ && chmod 700 ~/bin/pyosphere && chmod +x ~/bin/pyosphere
 ```
 
 You can also download specific versions to your project:
