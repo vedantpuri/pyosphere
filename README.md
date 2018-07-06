@@ -109,6 +109,8 @@ You can tune the following options in your configuration file:
   Specify preference to prune (`-p|--prune`) every build
 - #### run_source
   Specify python file to run on executing build
+- #### resources_to_include
+  Specify file extensions other than **.py** that are required by your code. E.g. `resources_to_include=("txt" "png" "pdf")`. Your code would be able to directly access these files from `$PROJECT_ROOT/pyosphere`
 
 Not providing one or more of these fields is acceptable and default settings will be inferred in such cases.
 

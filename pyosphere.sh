@@ -19,7 +19,7 @@ python_bin="python"
 given_run_source=""
 given_project_path="$(pwd)/"
 always_prune_pref=false
-resource_extension=""
+find_command="shopt -s nullglob && find ${given_project_path} -iname \"*.py\""
 pyosphere_dir="pyosphere/"
 output="/dev/stdout"
 
@@ -98,12 +98,11 @@ parse_pyosphere_config() {
   else
     echo "Pruned builds disabled." > "${output}"
   fi
-  if [[ -z "${resources_to_include}" ]]
+  if [[ -z "${resources_to_include[*]}" ]]
   then
     echo "No extra resources included." > "${output}"
   else
-    resource_extension="${resources_to_include}"
-    echo "Including ${resources_to_include}." > "${output}"
+    echo "Including ${resources_to_include[*]}." > "${output}"
   fi
   echo "Parse complete." > "${output}"
 }
@@ -118,7 +117,7 @@ generate_pyosphere_config() {
   echo -e "run_source=\"${given_run_source}\"" >> "${pyosphere_config}"
   echo -e "project_path=\"${given_project_path}\"" >> "${pyosphere_config}"
   echo -e "always_prune=${always_prune_pref}" >> "${pyosphere_config}"
-  echo -e "resources_to_include=${resource_extension}" >> "${pyosphere_config}"
+  echo -e "resources_to_include=()" >> "${pyosphere_config}"
   echo "Configuration generated." > "${output}"
 }
 
@@ -153,30 +152,35 @@ prune_build() {
   echo "Pruning complete." > "${output}"
 }
 
+# Find command generator
+generate_find_command() {
+  if [[ "${#resources_to_include[@]}" == "0" ]]
+  then
+    return
+  fi
+  for extension in ${resources_to_include[@]}
+  do
+    find_command+=" -o -iname \"*.${extension}\""
+  done
+}
+
 # Generate hard links for all .py files
 generate_build() {
   echo "${bold}Generating build files...${normal}" > "${output}"
   local is_python_project=false
-  local resource_path=""
-  mkdir -p "${pyosphere_dir}Resources/"
+  generate_find_command
   while read path
   do
     if [[ "${path: -3}" == ".py" ]]
     then
-      resource_path=""
       is_python_project=true
-    elif [[ "${path}" =~ "${resource_extension}" ]]
-    then
-      resource_path="Resources/"
-    else
-      continue
     fi
     local base_name="$(basename "${path}")"
-    local hard_link_path="${pyosphere_dir}${resource_path}${base_name}"
+    local hard_link_path="${pyosphere_dir}${base_name}"
     local sym_link_path="${pyosphere_dir}.${base_name}.alias"
     [[ ! -f "${hard_link_path}" ]] && ln "${path}" "${hard_link_path}"
     [[ ! -L "${sym_link_path}" ]] && ln -s "${path}" "${sym_link_path}"
-  done < <(shopt -s nullglob && find "${given_project_path}" -type f)
+  done < <(eval ${find_command})
   [[ $is_python_project == false ]] && rm -r "${pyosphere_dir}" && echo "Build failed. Not a python project." && exit > "${output}" || echo "Build generated." > "${output}"
 }
 
