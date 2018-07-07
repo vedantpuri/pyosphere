@@ -31,7 +31,7 @@ mkdir -p ~/bin && curl -s "https://api.github.com/repos/vedantpuri/pyosphere/rel
 You can also download specific versions to your project:
 ```bash
 cd ~/path/to/project
-curl -L -s "https://github.com/vedantpuri/pyosphere/releases/download/1.0.0/pyosphere.sh" > pyosphere.sh && chmod +x pyosphere.sh
+curl -L -s "https://github.com/vedantpuri/pyosphere/releases/download/1.1.0/pyosphere.sh" > pyosphere.sh && chmod +x pyosphere.sh
 ```
 
 Alternatively, download [pyosphere.sh](https://github.com/vedantpuri/pyosphere/releases/) and make it executable:
