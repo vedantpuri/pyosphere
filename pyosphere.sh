@@ -1,7 +1,7 @@
 #!/bin/bash
 # pyosphere.sh
 # Authors: Mayank Kumar, Vedant Puri
-# Version: 1.0.0
+# Version: 1.1.0
 
 # ----- ENVIRONMENT & CONSOLE
 
@@ -11,7 +11,7 @@ bold="$(tput bold)"
 normal="$(tput sgr0)"
 
 # Script information
-script_version="1.0.0"
+script_version="1.1.0"
 
 # Environment information with defaults
 pyosphere_config="pyosphere.config"
@@ -45,7 +45,7 @@ print_usage() {
 
   ${bold}pyosphere.config${normal} Options:
   ${underline}python${normal}         Specify python binary/command (default = ${bold}python${normal})
-  ${underline}run_source${normal}     Specify python binary/command
+  ${underline}run_source${normal}     Specify python file to be executed
   ${underline}project_path${normal}   Specify python project path (default = ${bold}pwd${normal})
   ${underline}always_prune${normal}   Specify pruning settings for incremental builds (default = ${bold}false${normal})"
 }
