@@ -1,7 +1,7 @@
 #!/bin/bash
 # pyosphere.sh
 # Authors: Mayank Kumar, Vedant Puri
-# Version: 1.1.0
+# Version: 1.1.1
 
 # ----- ENVIRONMENT & CONSOLE
 
@@ -11,7 +11,7 @@ bold="$(tput bold)"
 normal="$(tput sgr0)"
 
 # Script information
-script_version="1.1.0"
+script_version="1.1.1"
 
 # Environment information with defaults
 pyosphere_config="pyosphere.config"
@@ -47,7 +47,8 @@ print_usage() {
   ${underline}python${normal}         Specify python binary/command (default = ${bold}python${normal})
   ${underline}run_source${normal}     Specify python file to be executed
   ${underline}project_path${normal}   Specify python project path (default = ${bold}pwd${normal})
-  ${underline}always_prune${normal}   Specify pruning settings for incremental builds (default = ${bold}false${normal})"
+  ${underline}always_prune${normal}   Specify pruning settings for incremental builds (default = ${bold}false${normal})
+  ${underline}resources_to_include${normal}     Specify extensions of supplementary resources to be included"
 }
 
 # ----- PYOSPHERE CONFIGURATION MANAGEMENT
@@ -154,10 +155,6 @@ prune_build() {
 
 # Find command generator
 generate_find_command() {
-  if [[ "${#resources_to_include[@]}" == "0" ]]
-  then
-    return
-  fi
   for extension in ${resources_to_include[@]}
   do
     find_command+=" -o -iname \"*.${extension}\""
