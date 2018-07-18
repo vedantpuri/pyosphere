@@ -1,5 +1,5 @@
 ![Header](https://raw.githubusercontent.com/vedantpuri/pyosphere/master/resources/header.png)
-![Script Version](https://img.shields.io/badge/Version-1.1.0-blue.svg?style=for-the-badge) ![Github All Releases](https://img.shields.io/github/downloads/vedantpuri/pyosphere/total.svg?style=for-the-badge)
+![Script Version](https://img.shields.io/badge/Version-1.1.1-blue.svg?style=for-the-badge) ![Github All Releases](https://img.shields.io/github/downloads/vedantpuri/pyosphere/total.svg?style=for-the-badge)
 # Pyosphere
 Python projects that have complex codebase directory structures introduce a fairly common problem with **imports** within the project. While providing absolute paths is recommended, it is cumbersome, repetitive, and rather **boilerplate**. Absolute imports may also decrease application portability. **pyosphere.sh** mitigates these issues by simply providing a flattened execution environment, allowing all files to relatively import each other trivially, while allowing developers to maintain their choice of directory structure.
 
@@ -31,7 +31,7 @@ mkdir -p ~/bin && curl -s "https://api.github.com/repos/vedantpuri/pyosphere/rel
 You can also download specific versions to your project:
 ```bash
 cd ~/path/to/project
-curl -L -s "https://github.com/vedantpuri/pyosphere/releases/download/1.1.0/pyosphere.sh" > pyosphere.sh && chmod +x pyosphere.sh
+curl -L -s "https://github.com/vedantpuri/pyosphere/releases/download/1.1.1/pyosphere.sh" > pyosphere.sh && chmod +x pyosphere.sh
 ```
 
 Alternatively, download [pyosphere.sh](https://github.com/vedantpuri/pyosphere/releases/) and make it executable:
