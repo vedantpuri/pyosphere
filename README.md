@@ -1,5 +1,5 @@
 ![Header](https://raw.githubusercontent.com/vedantpuri/pyosphere/master/resources/header.png)
-![Script Version](https://img.shields.io/badge/Version-1.0.0-blue.svg?style=for-the-badge) ![Github All Releases](https://img.shields.io/github/downloads/vedantpuri/pyosphere/total.svg?style=for-the-badge)
+![Script Version](https://img.shields.io/badge/Version-1.0.0-blue.svg?style=for-the-badge)
 # Pyosphere
 Python projects that have complex codebase directory structures introduce a fairly common problem with **imports** within the project. While providing absolute paths is recommended, it is cumbersome, repetitive, and rather **boilerplate**. Absolute imports may also decrease application portability. **pyosphere.sh** mitigates these issues by simply providing a flattened execution environment, allowing all files to relatively import each other trivially, while allowing developers to maintain their choice of directory structure.
 
@@ -111,6 +111,30 @@ You can tune the following options in your configuration file:
   Specify python file to run on executing build
 
 Not providing one or more of these fields is acceptable and default settings will be inferred in such cases.
+
+## Use Cases
+Consider a multi-directory project with your custom library:
+- **src**
+  - hello_world.py
+  - test.py
+- **lib**
+  - **frameworks**
+    - test_framework.py
+    - test_utils.py
+  - **some_lib**
+    - some_lib_program.py
+
+Suppose that while working in `test.py`, you decide that you need `test_framework.py`. Ordinarily, you would:
+```
+# depends on where you are executing from
+path_to_test_framework = "..."
+import path_to_test_framework/test_framework.py
+```
+It can be cumbersome to specify a specific or even relative path to a different `.py` file. If `pyosphere` is the primary execution mechanism:
+```
+import test_framework.py
+```
+will work seamlessly, without manipulating directory structure. Additional resources such as `.txt` files or the like will also be handled if specified in `pyosphere`'s configuration.
 
 ## Limitations
 Due to the semantics of the script it fails to work as expected in projects which have:
