@@ -129,7 +129,7 @@ Consider a multi-directory project with your custom library:
     - some_lib_program.py
 
 Suppose that while working in `test.py`, you decide that you need `test_framework.py`. Ordinarily, you would:
-```
+```python
 # depends on where you are executing from
 path_to_test_framework = "..."
 import path_to_test_framework/test_framework.py
