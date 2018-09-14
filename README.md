@@ -1,5 +1,5 @@
 ![Header](https://raw.githubusercontent.com/vedantpuri/pyosphere/master/resources/header.png)
-![Script Version](https://img.shields.io/badge/Version-1.0.0-blue.svg?style=for-the-badge)
+![Script Version](https://img.shields.io/github/release/vedantpuri/pyosphere.svg?style=for-the-badge)
 # Pyosphere
 Python projects that have complex codebase directory structures introduce a fairly common problem with **imports** within the project. While providing absolute paths is recommended, it is cumbersome, repetitive, and rather **boilerplate**. Absolute imports may also decrease application portability. **pyosphere.sh** mitigates these issues by simply providing a flattened execution environment, allowing all files to relatively import each other trivially, while allowing developers to maintain their choice of directory structure.
 
