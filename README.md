@@ -135,7 +135,7 @@ path_to_test_framework = "..."
 import path_to_test_framework/test_framework.py
 ```
 It can be cumbersome to specify a specific or even relative path to a different `.py` file. If `pyosphere` is the primary execution mechanism:
-```
+```python
 import test_framework.py
 ```
 will work seamlessly, without manipulating directory structure. Additional resources such as `.txt` files or the like will also be handled if specified in `pyosphere`'s configuration.
