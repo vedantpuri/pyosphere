@@ -221,7 +221,7 @@ begin_execution() {
     echo -e "It is recommended to double-check your project directory.\nRunning from your ${bold}home or other high level directory${normal} can be problematic.\n"
     input=""
     read -p "${bold}Proceed${normal}? [Y/N]: " input
-    [[ "${input}" != "Y" || "${input}" != "y" ]] && echo "Aborted." && exit
+    [[ "${input}" != "Y" && "${input}" != "y" ]] && echo "Aborted." && exit
   fi
   mkdir -p "${pyosphere_dir}"
   generate_build
