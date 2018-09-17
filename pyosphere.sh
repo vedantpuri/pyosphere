@@ -1,7 +1,7 @@
 #!/bin/bash
 # pyosphere.sh
 # Authors: Mayank Kumar, Vedant Puri
-# Version: 1.1.1
+# Version: 1.1.2
 
 # ----- ENVIRONMENT & CONSOLE
 
@@ -11,7 +11,7 @@ bold="$(tput bold)"
 normal="$(tput sgr0)"
 
 # Script information
-script_version="1.1.1"
+script_version="1.1.2"
 
 # Environment information with defaults
 pyosphere_config="pyosphere.config"
@@ -32,23 +32,31 @@ print_version() {
 
 # Print pyosphere.sh usage
 print_usage() {
-  echo "Usage: ${bold}./pyosphere.sh${normal} [-v|--version] [-h|--help] [-cf=|--config-file=] [-cl|--clean] [-i|--init -e=|--execute=] [-r|--reset] [-p|--prune]
+  echo -e "Usage: ${bold}./pyosphere.sh${normal} [-v|--version] [-h|--help] [-cf=|--config-file=] [-cl|--clean] [-i|--init -e=|--execute=] [-r|--reset] [-p|--prune]
+
   where:
   ${underline}-v${normal}        Prints script version
   ${underline}-h${normal}        Prints script usage
   ${underline}-cf=${normal}      Executes with specified config file (default = ${bold}pyosphere.config${normal})
   ${underline}-cl${normal}       Clean current working directory
   ${underline}-i${normal}        Initialize pyosphere for project
-  ${underline}-ie=${normal}       Initialize pyosphere for project with name of main .py execution source
+  ${underline}-ie=${normal}      Initialize pyosphere for project with name of main .py execution source
   ${underline}-r${normal}        Reset project to pre-pyosphere state
   ${underline}-p${normal}        Prune project build
 
-  ${bold}pyosphere.config${normal} Options:
-  ${underline}python${normal}         Specify python binary/command (default = ${bold}python${normal})
-  ${underline}run_source${normal}     Specify python file to be executed
-  ${underline}project_path${normal}   Specify python project path (default = ${bold}pwd${normal})
-  ${underline}always_prune${normal}   Specify pruning settings for incremental builds (default = ${bold}false${normal})
-  ${underline}resources_to_include${normal}     Specify extensions of supplementary resources to be included"
+  ${bold}pyosphere.config${normal} options:
+  ${underline}python${normal}                Specify python binary/command
+  (default = ${bold}python${normal})
+
+  ${underline}run_source${normal}            Specify python file to be executed
+  ${underline}project_path${normal}          Specify python project path
+  (default = ${bold}pwd${normal})
+
+  ${underline}always_prune${normal}          Specify pruning settings for incremental builds
+  (default = ${bold}false${normal})
+
+  ${underline}resources_to_include${normal}  Specify extensions of supplementary resources to be included
+  (default = ${bold}none${normal})"
 }
 
 # ----- PYOSPHERE CONFIGURATION MANAGEMENT
