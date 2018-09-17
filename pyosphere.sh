@@ -215,6 +215,14 @@ reset() {
 begin_execution() {
   parse_pyosphere_config
   pyosphere_dir="${given_project_path}${pyosphere_dir}"
+  if [[ ! -f "${pyosphere_config}" ]]
+  then
+    echo -e "\nYour project directory is: \n${bold}${given_project_path}${normal}\n"
+    echo -e "It is recommended to double-check your project directory.\nRunning from your ${bold}home or other high level directory${normal} can be problematic.\n"
+    input=""
+    read -p "${bold}Proceed${normal}? [Y/N]: " input
+    [[ "${input}" != "Y" || "${input}" != "y" ]] && echo "Aborted." && exit
+  fi
   mkdir -p "${pyosphere_dir}"
   generate_build
   [[ $always_prune_pref == true ]] && prune_build
